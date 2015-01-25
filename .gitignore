@@ -1,0 +1,5 @@
+ProjectSettings/
+Library/
+Temp/
+*.meta
+*.userprefs
