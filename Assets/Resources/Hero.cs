@@ -23,7 +23,11 @@ public class Hero : Character {
 
 	protected override void OnCollisionEnter(Collision collision) {
 		base.OnCollisionEnter(collision);
+	}
 
-		this.Pickup(collision.gameObject);
+	protected override void OnTriggerEnter(Collider collider) {
+		base.OnTriggerEnter(collider);
+
+		this.Pickup(collider.gameObject);
 	}
 }

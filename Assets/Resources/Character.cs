@@ -56,10 +56,13 @@ public class Character : MonoBehaviour {
 	}
 
 	protected virtual void OnCollisionEnter(Collision collision) {
-		Debug.Log(collision);
 		if(collision.gameObject.tag == "Platform") {
 			_grounded = true;
 		}
+	}
+
+	protected virtual void OnTriggerEnter(Collider collider) {
+
 	}
 
 	public virtual void Move(float move) {
