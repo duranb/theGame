@@ -16,7 +16,7 @@ public class Character : MonoBehaviour {
 	protected float _speed;
 	protected float _jumpHeight;
 
-	public bool _grounded;
+	[HideInInspector]public bool _grounded;
 
 	// Use this for initialization
 	protected virtual void Start () {
@@ -65,14 +65,14 @@ public class Character : MonoBehaviour {
 
 	}
 
-	public virtual void Move(float move) {
+	public virtual void Run(float move) {
 		Vector2 newVelocity = new Vector3(move * _speed, _body.velocity.y, _body.velocity.z);
 		
 	    _body.velocity = newVelocity;
 	}
 
 	public virtual void Jump(bool jump) {
-		if(jump) {
+		if(jump &&  _grounded) {
 			Vector2 newVelocity = new Vector3(_body.velocity.x, _jumpHeight, _body.velocity.z);
 			_body.velocity = newVelocity;
 
@@ -93,7 +93,7 @@ public class Character : MonoBehaviour {
 		}
 	}
 
-	public virtual void Hurt(float damage) {
+	public virtual void TakeDamage(float damage) {
 		_currentHealth -= damage;
 	}
 }

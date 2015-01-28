@@ -46,11 +46,12 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
-     <Compile Include="Assets\Resources\Scripts\AttributeModifier.cs" />
-     <Compile Include="Assets\Resources\Scripts\Character.cs" />
-     <Compile Include="Assets\Resources\Scripts\CharacterInventory.cs" />
-     <Compile Include="Assets\Resources\Scripts\Hero.cs" />
-     <Compile Include="Assets\Resources\Scripts\Item.cs" />
+     <Compile Include="Assets\Resources\Scripts\Actors\Character.cs" />
+     <Compile Include="Assets\Resources\Scripts\Actors\CharacterInventory.cs" />
+     <Compile Include="Assets\Resources\Scripts\Actors\Hero.cs" />
+     <Compile Include="Assets\Resources\Scripts\Game\GameManager.cs" />
+     <Compile Include="Assets\Resources\Scripts\Items\AttributeModifier.cs" />
+     <Compile Include="Assets\Resources\Scripts\Items\Item.cs" />
  <Reference Include="UnityEngine.UI">
  <HintPath>E:/Program Files (x86)/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/4.6.1/UnityEngine.UI.dll</HintPath>
  </Reference>
