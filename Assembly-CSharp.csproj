@@ -48,8 +48,11 @@
   <ItemGroup>
      <Compile Include="Assets\Resources\Scripts\Actors\Character.cs" />
      <Compile Include="Assets\Resources\Scripts\Actors\CharacterInventory.cs" />
+     <Compile Include="Assets\Resources\Scripts\Actors\HGCharacterController.cs" />
+     <Compile Include="Assets\Resources\Scripts\Actors\HGInvestigatorBehaviour.cs" />
      <Compile Include="Assets\Resources\Scripts\Actors\Hero.cs" />
      <Compile Include="Assets\Resources\Scripts\Game\GameManager.cs" />
+     <Compile Include="Assets\Resources\Scripts\Game\HGPlayerTrackingCamera.cs" />
      <Compile Include="Assets\Resources\Scripts\Items\AttributeModifier.cs" />
      <Compile Include="Assets\Resources\Scripts\Items\Item.cs" />
  <Reference Include="UnityEngine.UI">
