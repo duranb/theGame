@@ -3,22 +3,33 @@ using System.Collections;
 
 public enum AmmunitionType
 {
-	Revolver = 0,
-	Rifle = 1
+	Revolver,
+	Rifle
 }
 
 public class Ammunition : MonoBehaviour {
-	public float _lifeSpan;
+	protected AmmunitionType _ammunitionType;
 
-	public void Fire() {
+	public float _lifeSpan;
+	public float _velocity;
+
+	public void Fire(float damage) {
 		Rigidbody rigidBody = this.GetComponent<Rigidbody>();
-		rigidBody.velocity = this.transform.right * 100;
+		rigidBody.velocity = this.transform.right * _velocity;
 
 		StartCoroutine(Life());
 	}
 
+	private void Expire() {
+		Destroy(this.gameObject);
+	}
+
 	private IEnumerator Life() {
 		yield return new WaitForSeconds(_lifeSpan);
-		Destroy(this.gameObject);
-	}	
+		Expire();
+	}
+
+	private void OnCollisionEnter2D(Collision2D collision) {
+		Expire();
+	}
 }

@@ -5,14 +5,12 @@ using System.Timers;
 
 public enum GunType
 {
-	Revolver = 0,
-	Rifle = 1
+	Revolver,
+	Rifle,
+	Sniper
 }
 
 public class Gun : Weapon {
-
-	#region events, properties and fields
-
 	public GameObject _ammunitionPrefab;
 
 	protected GunType _gunType;
@@ -21,65 +19,72 @@ public class Gun : Weapon {
 	protected float _baseReloadTime;
 	protected int _baseClipSize;
 
-	private int _currentClipSize;
-
-	public int _currentClipCount;
+	public int _currentClipAmmoCount;
 
 	private bool _isFiring = false;
 	private bool _isReloading = false;
 
-	#endregion
 
-	#region delegates
-
+	// Callback for when reloading is done
 	public delegate void OnReloadDelegate(AmmunitionType type, int ammoLeft);
 	public OnReloadDelegate OnReloadDone;
 
+	// Callback to indicate to the character that the clip is empty
 	public delegate void OnEmptyReloadDelegate();
 	public OnEmptyReloadDelegate OnEmptyReload;
 
+
+	// Callback to throttle the firing rate
 	private delegate void OnAttackDelegate();
 	private OnAttackDelegate OnAttackDone;
 
-	#endregion
-
-	#region public
-
 	/*
-	 * attackSpeedModifier - the attribute from the character for firing rate
+	 * attackDamageModifier - the attribute from the character to affect damage
+	 * attackRateModifier - the attribute from the character to affect rate of fire
 	 */
-	public override void Attack(float attackSpeedModifier) {
-		if(_currentClipCount > 0 && !_isFiring && !_isReloading) {
+	public override void Attack(float attackDamageModifier, float attackRateModifier) {
+		if(_currentClipAmmoCount > 0 && !_isFiring && !_isReloading) {
 			// Fire projectile
 			GameObject ammoObject = (GameObject)Instantiate(_ammunitionPrefab, this.transform.position, this.transform.rotation);
 			Ammunition ammo = ammoObject.GetComponent<Ammunition>();
 
-			ammo.Fire();
+			ammo.Fire(this._baseDamage * attackDamageModifier);
 
-			_currentClipCount--;
+			_currentClipAmmoCount--;
 			_isFiring = true;
 
-			StartCoroutine(AttackWait(attackSpeedModifier));
+			StartCoroutine(AttackWait(attackRateModifier));
 		}
 		
-		if(_currentClipCount == 0) {
+		if(_currentClipAmmoCount == 0) {
 			OnEmptyReload();
 		}
 	}
 
 	/*
+	 * Used to throttle the firing rate
+	 *
+	 * attackRateModifier - the attribute from the character to affect rate of fire
+	 */ 
+	private IEnumerator AttackWait(float attackRateModifier) {
+		yield return new WaitForSeconds(this._baseRate * attackRateModifier);
+		_isFiring = false;
+	}
+
+	/*
 	 * currentAmmoCount - the count of ammo of the type used by the gun
-	 * reloadTimeModifier - the attribute from the character for reload time
+	 * reloadTimeModifier - the attribute from the character to affect reload time
 	 */
-	public virtual void Reload(int currentAmmoCount, float reloadTimeModifier) {
-		if(currentAmmoCount == 0 || _currentClipCount == _currentClipSize) {
+	public virtual void Reload(float reloadTimeModifier, int currentAmmoCount) {
+		Debug.Log("RELOAD" + ", " + reloadTimeModifier + ", " + currentAmmoCount);
+		if(currentAmmoCount == 0 || _currentClipAmmoCount == _baseClipSize) {
 			return;
 		}
 
-		var clipDeficit = _currentClipSize - _currentClipCount;
+		var clipDeficit = _baseClipSize - _currentClipAmmoCount;
 
 		var ammoLeft = currentAmmoCount - clipDeficit;
-		_currentClipCount += (ammoLeft > 0) ? clipDeficit : currentAmmoCount;
+		_currentClipAmmoCount += (ammoLeft > 0) ? clipDeficit : currentAmmoCount;
 		currentAmmoCount = (ammoLeft > 0) ? ammoLeft : 0;
 
 		_isReloading = true;
@@ -87,32 +92,26 @@ public class Gun : Weapon {
 		StartCoroutine(ReloadWait(reloadTimeModifier, currentAmmoCount));
 	}
 
+	/*
+	 * Used to impose reload time
+	 *
+	 * currentAmmoCount - the count of ammo of the type used by the gun
+	 * reloadTimeModifier - the attribute from the character to affect reload time
+	 */ 
 	private IEnumerator ReloadWait(float reloadTimeModifier, int currentAmmoCount) {
-		yield return new WaitForSeconds(_baseReloadTime - reloadTimeModifier);
+		yield return new WaitForSeconds(_baseReloadTime * reloadTimeModifier);
 		_isReloading = false;
 		OnReloadDone(_ammunitionType, currentAmmoCount);
 	}
 
-	private IEnumerator AttackWait(float attackSpeedModifier) {
-		yield return new WaitForSeconds(_baseRate - attackSpeedModifier);
-		_isFiring = false;
-	}
-	
-	#endregion
-
-	#region Monobehaviour
 
 	public override void Start() {
 		base.Start();
 
 		this._weaponType = WeaponType.Gun;
-
-		_currentClipSize = _baseClipSize;
 	}
 
 	public override void Update() {
 		base.Update();
 	}
-
-	#endregion
 }

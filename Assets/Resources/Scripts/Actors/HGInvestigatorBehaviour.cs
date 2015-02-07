@@ -40,7 +40,7 @@ public class HGInvestigatorBehaviour : MonoBehaviour
 	}
 
 	void OnEmptyReload() {
-		_revolver.Reload(ammoCount, 0);
+		_revolver.Reload(1, ammoCount);
 	}
 
 
@@ -115,7 +115,7 @@ public class HGInvestigatorBehaviour : MonoBehaviour
 		_controller.move( _velocity * Time.deltaTime );
 
 		if(Input.GetKey(KeyCode.Space)) {
-			_revolver.Attack(0);
+			_revolver.Attack(1, 1);
 		}
 	}
 

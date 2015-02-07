@@ -2,13 +2,9 @@ using UnityEngine;
 using System.Collections;
 
 public class Revolver : Gun {
-	public override void Attack(float attackSpeedModifier) {
-		base.Attack(attackSpeedModifier);
+	public override void Attack(float attackDamageModifier, float attackSpeedModifier) {
+		base.Attack(attackDamageModifier, attackSpeedModifier);
 	}
-
-	// public Revolver(string name, float damage, float rate) : base(name, damage, rate) {
-	// 	this._gunType = GunType.Revolver;
-	// }
 
 	public override void Start() {
 		this._gunType = GunType.Revolver;

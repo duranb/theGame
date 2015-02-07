@@ -3,9 +3,9 @@ using System.Collections;
 
 public enum ItemTypes
 {
-	AttributeModifier = 0,
-	Weapon = 1,
-	Ammunition = 2
+	AttributeModifier,
+	Weapon,
+	Ammunition
 }
 
 public class Item : MonoBehaviour {

@@ -3,14 +3,16 @@ using System.Collections;
 
 public enum AttributeModifierTypes
 {
-	Speed = 0,
-	Jump = 1
+	Speed,
+	Jump,
+	Damage,
+	ReloadSpeed
 }
 
 public enum AttributeModifierMethod
 {
-	Additive = 0,
-	Multiplicative = 1
+	Additive,
+	Multiplicative
 }
 
 public class AttributeModifier : Item {
