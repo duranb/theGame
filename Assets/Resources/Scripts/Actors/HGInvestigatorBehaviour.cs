@@ -18,8 +18,9 @@ public class HGInvestigatorBehaviour : MonoBehaviour
 	private RaycastHit2D _lastControllerColliderHit;
 	private Vector3 _velocity;
 
+	public Revolver _revolver;
 
-
+	public int ammoCount = 10;
 
 	void Awake()
 	{
@@ -29,6 +30,17 @@ public class HGInvestigatorBehaviour : MonoBehaviour
 		_controller.OnControllerCollidedEvent += OnControllerCollider;
 		_controller.OnTriggerEnterEvent += OnTriggerEnterEvent;
 		_controller.OnTriggerExitEvent += OnTriggerExitEvent;
+
+		_revolver.OnReloadDone = OnReloadDone;
+		_revolver.OnEmptyReload = OnEmptyReload;
+	}
+
+	void OnReloadDone(AmmunitionType ammunitionType, int currentAmmoCount) {
+		ammoCount = currentAmmoCount;
+	}
+
+	void OnEmptyReload() {
+		_revolver.Reload(ammoCount, 0);
 	}
 
 
@@ -101,6 +113,10 @@ public class HGInvestigatorBehaviour : MonoBehaviour
 		_velocity.y += _gravity * Time.deltaTime;
 
 		_controller.move( _velocity * Time.deltaTime );
+
+		if(Input.GetKey(KeyCode.Space)) {
+			_revolver.Attack(0);
+		}
 	}
 
 }

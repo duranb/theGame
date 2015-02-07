@@ -40,7 +40,7 @@ public class Character : MonoBehaviour {
 
 		// Apply modifiers
 		foreach(AttributeModifier modifier in modifiers) {
-			switch(modifier.modifierType) {
+			switch(modifier._modifierType) {
 				case AttributeModifierTypes.Speed:
 					_speed = modifier.Apply(baseSpeed);
 					break;

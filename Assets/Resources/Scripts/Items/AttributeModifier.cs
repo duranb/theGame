@@ -14,12 +14,19 @@ public enum AttributeModifierMethod
 }
 
 public class AttributeModifier : Item {
-	public AttributeModifierTypes modifierType;
-	public AttributeModifierMethod modifierMethod;
+	public AttributeModifierTypes _modifierType;
+	public AttributeModifierMethod _modifierMethod;
+	
+	public float _value;
+
+	public float value {
+		get { return _value; }
+		set { _value = value; }
+	}
 
 	public float Apply(float baseValue) {
 		float newValue = baseValue;
-		switch(modifierMethod) {
+		switch(_modifierMethod) {
 			case AttributeModifierMethod.Additive:
 				newValue += this.value;
 				break;
