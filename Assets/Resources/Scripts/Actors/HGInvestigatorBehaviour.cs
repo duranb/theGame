@@ -31,8 +31,11 @@ public class HGInvestigatorBehaviour : MonoBehaviour
 		_controller.OnTriggerEnterEvent += OnTriggerEnterEvent;
 		_controller.OnTriggerExitEvent += OnTriggerExitEvent;
 
-		_revolver.OnReloadDone = OnReloadDone;
-		_revolver.OnEmptyReload = OnEmptyReload;
+        if (_revolver != null)
+        {
+            _revolver.OnReloadDone = OnReloadDone;
+            _revolver.OnEmptyReload = OnEmptyReload;
+        }
 	}
 
 	void OnReloadDone(AmmunitionType ammunitionType, int currentAmmoCount) {
