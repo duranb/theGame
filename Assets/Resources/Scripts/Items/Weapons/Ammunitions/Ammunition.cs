@@ -14,7 +14,7 @@ public class Ammunition : MonoBehaviour {
 	public float _velocity;
 
 	public void Fire(float damage) {
-		Rigidbody rigidBody = this.GetComponent<Rigidbody>();
+		Rigidbody2D rigidBody = this.GetComponent<Rigidbody2D>();
 		rigidBody.velocity = this.transform.right * _velocity;
 
 		StartCoroutine(Life());
@@ -29,7 +29,8 @@ public class Ammunition : MonoBehaviour {
 		Expire();
 	}
 
-	private void OnCollisionEnter2D(Collision2D collision) {
+	private void OnTriggerEnter2D(Collider2D collider) {
+		Debug.Log("BOOM");
 		Expire();
 	}
 }
