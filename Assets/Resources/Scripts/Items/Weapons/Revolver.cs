@@ -2,18 +2,10 @@ using UnityEngine;
 using System.Collections;
 
 public class Revolver : Gun {
-	public override void Attack(float attackDamageModifier, float attackSpeedModifier) {
-		base.Attack(attackDamageModifier, attackSpeedModifier);
+	public Revolver(string revolverName, float baseDamage, float baseEquipTime, float baseRate, float baseReloadTime, int baseClipSize) : base(revolverName, GunType.Revolver, AmmunitionType.Revolver, (GameObject)Resources.Load("Prefabs/38mmBullet", typeof(GameObject)), baseDamage, baseEquipTime, baseRate, baseReloadTime, baseClipSize) {
 	}
 
-	public override void Start() {
-		this._gunType = GunType.Revolver;
-
-		this._baseDamage = 100f;
-		this._baseReloadTime = 2f;
-		this._baseRate = .5f;
-		this._baseClipSize = 6;
-
-		base.Start();
+	public override WeaponState Attack(Vector3 position, Quaternion direction, float attackDamageModifier, float attackSpeedModifier) {
+		return base.Attack(position, direction, attackDamageModifier, attackSpeedModifier);
 	}
 }

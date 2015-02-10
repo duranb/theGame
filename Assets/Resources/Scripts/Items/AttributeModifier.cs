@@ -26,6 +26,10 @@ public class AttributeModifier : Item {
 		set { _value = value; }
 	}
 
+	public AttributeModifier(string attributeName) : base(attributeName, ItemType.AttributeModifier) {
+
+	}
+
 	public float Apply(float baseValue) {
 		float newValue = baseValue;
 		switch(_modifierMethod) {

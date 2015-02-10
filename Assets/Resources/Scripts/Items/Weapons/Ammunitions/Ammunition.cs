@@ -4,7 +4,8 @@ using System.Collections;
 public enum AmmunitionType
 {
 	Revolver,
-	Rifle
+	Rifle,
+	Length
 }
 
 public class Ammunition : MonoBehaviour {
@@ -30,7 +31,6 @@ public class Ammunition : MonoBehaviour {
 	}
 
 	private void OnTriggerEnter2D(Collider2D collider) {
-		Debug.Log("BOOM");
 		Expire();
 	}
 }

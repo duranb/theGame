@@ -18,9 +18,11 @@ public class HGInvestigatorBehaviour : MonoBehaviour
 	private RaycastHit2D _lastControllerColliderHit;
 	private Vector3 _velocity;
 
-	public Revolver _revolver;
+	private CharacterInventory _characterInventory;
 
-	public int ammoCount = 10;
+	private Weapon _equippedWeapon;
+
+	public int _inventorySize = 20;
 
 	void Awake()
 	{
@@ -31,21 +33,47 @@ public class HGInvestigatorBehaviour : MonoBehaviour
 		_controller.OnTriggerEnterEvent += OnTriggerEnterEvent;
 		_controller.OnTriggerExitEvent += OnTriggerExitEvent;
 
-        if (_revolver != null)
-        {
-            _revolver.OnReloadDone = OnReloadDone;
-            _revolver.OnEmptyReload = OnEmptyReload;
-        }
+		_characterInventory = new CharacterInventory(_inventorySize);
+		
+
+		// For testing
+		Revolver revolver = new Revolver("Betsy", 100, 2000, 1000, 2000, 6);
+		Revolver revolverr = new Revolver("Bettsy", 100, 3000, 1000, 2000, 6);
+		AmmunitionPickup revolverAmmo = new AmmunitionPickup(AmmunitionType.Revolver, 40);
+
+		// Set up inventory
+		_characterInventory.Add(revolver);
+		_characterInventory.Add(revolverr);
+
+		_characterInventory.SetAmmoCapacity(AmmunitionType.Revolver, 30);
+
+		bool added = _characterInventory.Add(revolverAmmo);
+
+		// Should print "false, 10"
+		Debug.Log(added + ", " + revolverAmmo.amount);
 	}
 
-	void OnReloadDone(AmmunitionType ammunitionType, int currentAmmoCount) {
-		ammoCount = currentAmmoCount;
-	}
+	// void OnReloadDone(AmmunitionType ammunitionType, int currentAmmoCount) {
+	//     _ammoCount = currentAmmoCount;
+	//     Debug.Log("New ammo: " + _ammoCount);
+	// }
 
-	void OnEmptyReload() {
-		_revolver.Reload(1, ammoCount);
-	}
+	// void OnEmptyReload() {
+	//     ((Gun)_equippedWeapon).Reload(1, _ammoCount);
+	// }
 
+	// void EquipWeapon(Weapon weaponToEquip) {
+	//     // if(_equippedWeapon != null && _equippedWeapon.weaponType == WeaponType.Gun) {
+	//     //     ((Gun)_equippedWeapon).OnReloadDone -= OnReloadDone;
+	//     //     ((Gun)_equippedWeapon).OnEmptyReload -= OnEmptyReload;
+	//     // }
+
+	//     _equippedWeapon = weaponToEquip;
+	//     if(_equippedWeapon.weaponType == WeaponType.Gun) {
+	//         ((Gun)_equippedWeapon).OnReloadDone = OnReloadDone;
+	//         ((Gun)_equippedWeapon).OnEmptyReload = OnEmptyReload;
+	//     }
+	// }
 
 	#region Event Listeners
 
@@ -118,7 +146,19 @@ public class HGInvestigatorBehaviour : MonoBehaviour
 		_controller.move( _velocity * Time.deltaTime );
 
 		if(Input.GetKey(KeyCode.Space)) {
-			_revolver.Attack(1, 1);
+			if(_characterInventory.equippedWeapon != null) {
+				WeaponState weaponState = _characterInventory.equippedWeapon.Attack(this.transform.position, this.transform.rotation, 1, 1);
+				if(weaponState == WeaponState.Empty) {
+					_characterInventory.Reload(1);
+				}
+			}
+		}
+
+		if(Input.GetKeyDown(KeyCode.Alpha1)) {
+			_characterInventory.Equip(0);
+		}
+		if(Input.GetKeyDown(KeyCode.Alpha2)) {
+			_characterInventory.Equip(1);
 		}
 	}
 

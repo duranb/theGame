@@ -1,21 +1,25 @@
 using UnityEngine;
 using System.Collections;
 
-public enum ItemTypes
+public enum ItemType
 {
 	AttributeModifier,
 	Weapon,
 	Ammunition
 }
 
-public class Item : MonoBehaviour {
-	public ItemTypes _type;
-	public string _itemName;
+public class Item {
+	public ItemType _itemType;
+	public string _name;
 	public float _duration = Mathf.Infinity;
 
-	public ItemTypes type {
-		get { return _type; }
-		set { _type = value; }
+	public string name {
+		get { return _name; }
+	}
+
+	public ItemType itemType {
+		get { return _itemType; }
+		set { _itemType = value; }
 	}
 
 	public float duration {
@@ -23,7 +27,12 @@ public class Item : MonoBehaviour {
 		set { _duration = value; }
 	}
 
-	void Start() {
-		this.gameObject.tag = "Item";
+	public Item(string name, ItemType itemType) {
+		_name = name;
+		_itemType = itemType;
 	}
+
+	// void Start() {
+	// 	this.gameObject.tag = "Item";
+	// }
 }

@@ -1,6 +1,5 @@
 using UnityEngine;
 using System.Collections;
-
 using System.Timers;
 
 public enum GunType
@@ -11,7 +10,7 @@ public enum GunType
 }
 
 public class Gun : Weapon {
-	public GameObject _ammunitionPrefab;
+	protected GameObject _ammunitionPrefab;
 
 	protected GunType _gunType;
 	protected AmmunitionType _ammunitionType;
@@ -19,99 +18,135 @@ public class Gun : Weapon {
 	protected float _baseReloadTime;
 	protected int _baseClipSize;
 
-	public int _currentClipAmmoCount;
+	protected int _currentClipAmmoCount;
 
-	private bool _isFiring = false;
-	private bool _isReloading = false;
+	protected Timer _reloadTimer;
 
+	// private bool _isFiring = false;
+	// private bool _isReloading = false;
+	public GunType gunType {
+		get { return _gunType; }
+	}
+
+	public AmmunitionType ammunitionType {
+		get { return _ammunitionType; }
+	}
 
 	// Callback for when reloading is done
 	public delegate void OnReloadDelegate(AmmunitionType type, int ammoLeft);
 	public OnReloadDelegate OnReloadDone;
 
-	// Callback to indicate to the character that the clip is empty
-	public delegate void OnEmptyReloadDelegate();
-	public OnEmptyReloadDelegate OnEmptyReload;
+	public Gun(string weaponName, GunType gunType, AmmunitionType ammunitionType, GameObject ammunitionPrefab, float baseDamage, float baseEquipTime, float baseRate, float baseReloadTime, int baseClipSize) : base(weaponName, WeaponType.Gun, baseDamage, baseEquipTime, baseRate) {
+		_gunType = gunType;
+		_ammunitionType = ammunitionType;
 
+		_ammunitionPrefab = ammunitionPrefab;
 
-	// Callback to throttle the firing rate
-	private delegate void OnAttackDelegate();
-	private OnAttackDelegate OnAttackDone;
+		_baseReloadTime = baseReloadTime;
+		_baseClipSize = baseClipSize;
+	}
 
 	/*
+	 * position - the position to fire the bullet from
+	 * direction - the direction to fire the bullet at
 	 * attackDamageModifier - the attribute from the character to affect damage
 	 * attackRateModifier - the attribute from the character to affect rate of fire
 	 */
-	public override void Attack(float attackDamageModifier, float attackRateModifier) {
-		if(_currentClipAmmoCount > 0 && !_isFiring && !_isReloading) {
+	public override WeaponState Attack(Vector3 position, Quaternion direction, float attackDamageModifier, float attackRateModifier) {
+		if(_currentClipAmmoCount > 0 && _weaponState == WeaponState.Ready/*!_isFiring && !_isReloading*/) {
 			// Fire projectile
-			GameObject ammoObject = (GameObject)Instantiate(_ammunitionPrefab, this.transform.position, this.transform.rotation);
+			GameObject ammoObject = (GameObject)MonoBehaviour.Instantiate(_ammunitionPrefab, position, direction);
 			Ammunition ammo = ammoObject.GetComponent<Ammunition>();
 
 			ammo.Fire(this._baseDamage * attackDamageModifier);
 
 			_currentClipAmmoCount--;
-			_isFiring = true;
 
-			StartCoroutine(AttackWait(attackRateModifier));
+			// _isFiring = true;
+			SetState(WeaponState.Attacking);
+
+	        _attackTimer = new Timer(this._baseRate * attackRateModifier);
+	        _attackTimer.Enabled = true;
+    		_attackTimer.AutoReset = false; //Stops it from repeating
+	        // Hook up the Elapsed event for the timer. 
+	        _attackTimer.Elapsed += delegate { AttackWait(); };
+		} else if(_currentClipAmmoCount == 0 && _weaponState == WeaponState.Ready) {
+			// OnEmptyReload();
+			SetState(WeaponState.Empty);
 		}
-		
-		if(_currentClipAmmoCount == 0) {
-			OnEmptyReload();
-		}
+
+		return _weaponState;
 	}
 
 	/*
 	 * Used to throttle the firing rate
-	 *
-	 * attackRateModifier - the attribute from the character to affect rate of fire
 	 */ 
-	private IEnumerator AttackWait(float attackRateModifier) {
-		yield return new WaitForSeconds(this._baseRate * attackRateModifier);
-		_isFiring = false;
+	private void AttackWait() {
+		if(_weaponState == WeaponState.Attacking) {
+			// _isFiring = false;
+			if(_currentClipAmmoCount == 0) {
+				SetState(WeaponState.Empty);
+			} else {
+				SetState(WeaponState.Ready);
+			}
+		}
 	}
 
 	/*
 	 * currentAmmoCount - the count of ammo of the type used by the gun
 	 * reloadTimeModifier - the attribute from the character to affect reload time
 	 */
-	public virtual void Reload(float reloadTimeModifier, int currentAmmoCount) {
-		Debug.Log("RELOAD" + ", " + reloadTimeModifier + ", " + currentAmmoCount);
+	public virtual bool Reload(float reloadTimeModifier, int currentAmmoCount) {
 		if(currentAmmoCount == 0 || _currentClipAmmoCount == _baseClipSize) {
-			return;
+			return false;
 		}
 
-		var clipDeficit = _baseClipSize - _currentClipAmmoCount;
+		if(_weaponState == WeaponState.Ready || _weaponState == WeaponState.Empty) {
+			// Debug.Log("RELOAD" + ", " + this.name + ", " + reloadTimeModifier + ", " + currentAmmoCount);
+			// int clipDeficit = _baseClipSize - _currentClipAmmoCount;
 
-		var ammoLeft = currentAmmoCount - clipDeficit;
-		_currentClipAmmoCount += (ammoLeft > 0) ? clipDeficit : currentAmmoCount;
-		currentAmmoCount = (ammoLeft > 0) ? ammoLeft : 0;
+			// int ammoLeft = currentAmmoCount - clipDeficit;
+			// _currentClipAmmoCount += (ammoLeft > 0) ? clipDeficit : currentAmmoCount;
+			// currentAmmoCount = (ammoLeft > 0) ? ammoLeft : 0;
 
-		_isReloading = true;
+			// _isReloading = true;
+			SetState(WeaponState.Reloading);
 
-		StartCoroutine(ReloadWait(reloadTimeModifier, currentAmmoCount));
+	        _reloadTimer = new Timer(this._baseReloadTime * reloadTimeModifier);
+	        _reloadTimer.Enabled = true;
+	    	_reloadTimer.AutoReset = false; //Stops it from repeating
+	        // Hook up the Elapsed event for the timer. 
+	        _reloadTimer.Elapsed += delegate {ReloadWait(currentAmmoCount); };
+
+	        return true;
+	    }
+
+	    return false;
 	}
 
 	/*
 	 * Used to impose reload time
 	 *
 	 * currentAmmoCount - the count of ammo of the type used by the gun
-	 * reloadTimeModifier - the attribute from the character to affect reload time
-	 */ 
-	private IEnumerator ReloadWait(float reloadTimeModifier, int currentAmmoCount) {
-		yield return new WaitForSeconds(_baseReloadTime * reloadTimeModifier);
-		_isReloading = false;
-		OnReloadDone(_ammunitionType, currentAmmoCount);
+	 */
+	private void ReloadWait(int currentAmmoCount) {
+		if(_weaponState == WeaponState.Reloading) {
+			int clipDeficit = _baseClipSize - _currentClipAmmoCount;
+
+			int ammoLeft = currentAmmoCount - clipDeficit;
+			_currentClipAmmoCount += (ammoLeft > 0) ? clipDeficit : currentAmmoCount;
+			currentAmmoCount = (ammoLeft > 0) ? ammoLeft : 0;
+			// _isReloading = false;
+			SetState(WeaponState.Ready);
+			OnReloadDone(_ammunitionType, currentAmmoCount);
+		}		
 	}
 
+	public override void Unequip() {
+		base.Unequip();
 
-	public override void Start() {
-		base.Start();
-
-		this._weaponType = WeaponType.Gun;
-	}
-
-	public override void Update() {
-		base.Update();
+		if(_reloadTimer != null) {
+			_reloadTimer.Dispose();
+		}
 	}
 }
