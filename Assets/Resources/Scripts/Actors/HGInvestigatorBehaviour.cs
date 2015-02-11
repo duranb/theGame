@@ -18,9 +18,9 @@ public class HGInvestigatorBehaviour : MonoBehaviour
 	private RaycastHit2D _lastControllerColliderHit;
 	private Vector3 _velocity;
 
-	private CharacterInventory _characterInventory;
+	private HGCharacterInventory _characterInventory;
 
-	private Weapon _equippedWeapon;
+	private HGWeapon _equippedWeapon;
 
 	public int _inventorySize = 20;
 
@@ -33,13 +33,13 @@ public class HGInvestigatorBehaviour : MonoBehaviour
 		_controller.OnTriggerEnterEvent += OnTriggerEnterEvent;
 		_controller.OnTriggerExitEvent += OnTriggerExitEvent;
 
-		_characterInventory = new CharacterInventory(_inventorySize);
+		_characterInventory = new HGCharacterInventory(_inventorySize);
 		
 
 		// For testing
-		Revolver revolver = new Revolver("Betsy", 100, 2000, 1000, 2000, 6);
-		Revolver revolverr = new Revolver("Bettsy", 100, 3000, 1000, 2000, 6);
-		AmmunitionPickup revolverAmmo = new AmmunitionPickup(AmmunitionType.Revolver, 40);
+		HGRevolver revolver = new HGRevolver("Betsy", 100, 2000, 1000, 2000, 6);
+		HGRevolver revolverr = new HGRevolver("Bettsy", 100, 3000, 1000, 2000, 6);
+		HGAmmunitionPickup revolverAmmo = new HGAmmunitionPickup(AmmunitionType.Revolver, 40);
 
 		// Set up inventory
 		_characterInventory.Add(revolver);

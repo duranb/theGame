@@ -15,7 +15,7 @@ public enum AttributeModifierMethod
 	Multiplicative
 }
 
-public class AttributeModifier : Item {
+public class HGAttributeModifier : HGItem {
 	public AttributeModifierTypes _modifierType;
 	public AttributeModifierMethod _modifierMethod;
 	
@@ -26,7 +26,7 @@ public class AttributeModifier : Item {
 		set { _value = value; }
 	}
 
-	public AttributeModifier(string attributeName) : base(attributeName, ItemType.AttributeModifier) {
+	public HGAttributeModifier(string attributeName) : base(attributeName, ItemType.AttributeModifier) {
 
 	}
 

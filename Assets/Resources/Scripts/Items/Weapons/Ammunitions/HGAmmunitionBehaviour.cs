@@ -8,13 +8,13 @@ public enum AmmunitionType
 	Length
 }
 
-public class Ammunition : MonoBehaviour {
+public class HGAmmunitionBehaviour : MonoBehaviour {
 	protected AmmunitionType _ammunitionType;
 
 	public float _lifeSpan;
 	public float _velocity;
 
-	public void Fire(float damage) {
+	public virtual void Fire(float damage) {
 		Rigidbody2D rigidBody = this.GetComponent<Rigidbody2D>();
 		rigidBody.velocity = this.transform.right * _velocity;
 

@@ -8,7 +8,7 @@ public enum ItemType
 	Ammunition
 }
 
-public class Item {
+public class HGItem {
 	public ItemType _itemType;
 	public string _name;
 	public float _duration = Mathf.Infinity;
@@ -27,7 +27,7 @@ public class Item {
 		set { _duration = value; }
 	}
 
-	public Item(string name, ItemType itemType) {
+	public HGItem(string name, ItemType itemType) {
 		_name = name;
 		_itemType = itemType;
 	}

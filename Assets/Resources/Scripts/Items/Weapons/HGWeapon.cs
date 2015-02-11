@@ -18,7 +18,7 @@ public enum WeaponState {
 	Broken
 }
 
-public class Weapon : Item {
+public class HGWeapon : HGItem {
 	protected WeaponType _weaponType;
 
 	protected WeaponState _weaponState = WeaponState.Unequipped;
@@ -39,7 +39,7 @@ public class Weapon : Item {
 		get { return _weaponState; }
 	}
 	
-	public Weapon(string weaponName, WeaponType weaponType, float baseDamage, float baseEquipTime, float baseRate) : base(weaponName, ItemType.Weapon) {
+	public HGWeapon(string weaponName, WeaponType weaponType, float baseDamage, float baseEquipTime, float baseRate) : base(weaponName, ItemType.Weapon) {
 		_weaponType = weaponType;
 
 		_baseDamage = baseDamage;

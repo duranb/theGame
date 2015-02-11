@@ -2,10 +2,10 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-public class CharacterInventory {
-	private Item[] _items;
+public class HGCharacterInventory {
+	private HGItem[] _items;
 
-	private List<AttributeModifier> _modifiers;
+	private List<HGAttributeModifier> _modifiers;
 
 	private int[] _ammunitions = new int[(int)AmmunitionType.Length];
 	private int[] _ammunitionCapacities = new int[(int)AmmunitionType.Length];
@@ -14,25 +14,25 @@ public class CharacterInventory {
 	private int _gotFromIndex = -1;
 
 	#region equipment variables
-	Weapon _equippedWeapon;
+	HGWeapon _equippedWeapon;
 
 	#endregion
 
-	public List<AttributeModifier> modifiers {
+	public List<HGAttributeModifier> modifiers {
 		get { return _modifiers; }
 	}
 
-	public Weapon equippedWeapon {
+	public HGWeapon equippedWeapon {
 		get { return _equippedWeapon; }
 	}
 
 	/*
 	 * size - the size of the inventory
 	 */
-	public CharacterInventory(int size) {
-		_items = new Item[size];
+	public HGCharacterInventory(int size) {
+		_items = new HGItem[size];
 		
-		_modifiers = new List<AttributeModifier>();
+		_modifiers = new List<HGAttributeModifier>();
 	}
 
 	/*
@@ -79,15 +79,15 @@ public class CharacterInventory {
 	 * returns true if successfully added, which should remove the item from the level
 	 * returns false otherwise, which should leave it in play, but potentially modified
 	 */
-	public bool Add(Item item) {
+	public bool Add(HGItem item) {
 		bool isAdded = false;
 		switch(item.itemType) {
 			case ItemType.AttributeModifier:
-				_modifiers.Add((AttributeModifier)item);
+				_modifiers.Add((HGAttributeModifier)item);
 				isAdded = true;
 				break;
 			case ItemType.Ammunition:
-				AmmunitionPickup ammoPickup = (AmmunitionPickup)item;
+				HGAmmunitionPickup ammoPickup = (HGAmmunitionPickup)item;
 
 				// int ammoTypeIndex = (int)ammoPickup.ammoType;
 				AmmunitionType ammoType = ammoPickup.ammoType;
@@ -133,8 +133,8 @@ public class CharacterInventory {
 	 * Get the item at an index
 	 * atIndex - the index to retrieve the item from
 	 */
-	public Item GetItem(int atIndex) {
-		Item retrievedItem = null;
+	public HGItem GetItem(int atIndex) {
+		HGItem retrievedItem = null;
 		if(_gotFromIndex != -1 && atIndex >= 0 && atIndex < _items.Length && _items[atIndex] != null) {
 			retrievedItem = _items[atIndex];
 
@@ -153,8 +153,8 @@ public class CharacterInventory {
 	 * returns an item if an item was previously at the desired index 
 	 * so that the user can choose to move it
 	 */
-	public Item SetItem(Item item, int atIndex) {
-		Item replacedItem = null;
+	public HGItem SetItem(HGItem item, int atIndex) {
+		HGItem replacedItem = null;
 		if(atIndex >= 0 && atIndex < _items.Length) {
 			_gotFromIndex = -1;
 
@@ -170,7 +170,7 @@ public class CharacterInventory {
 	 * Puts back an item retrieved but the user canceled the action
 	 * If no index is found, then put the item in the first empty slot
 	 */
-	public void PutBackItem(Item item) {
+	public void PutBackItem(HGItem item) {
 		if(_gotFromIndex == -1) {
 			Add(item);
 		} else {
@@ -181,7 +181,7 @@ public class CharacterInventory {
 	/*
 	 * Discards an item
 	 */
-	public void DropItem(Item itemToDrop) {
+	public void DropItem(HGItem itemToDrop) {
 		// Spawn an Item to represent the dropped item
 	}
 
@@ -198,13 +198,13 @@ public class CharacterInventory {
 	 */
 	public void Equip(int atIndex) {
 		// Item item = GetItem(atIndex); // Uncomment if we want to remove equipped items
-		Item item = _items[atIndex];
+		HGItem item = _items[atIndex];
 
 		Debug.Log("Equipping item:" + item.name);
 		if(item != null) {
 			switch (item.itemType) {
 				case ItemType.Weapon:
-					EquipWeapon((Weapon)item);
+					EquipWeapon((HGWeapon)item);
 					break;
 				default:
 					break;
@@ -215,7 +215,7 @@ public class CharacterInventory {
 	/*
 	 * Equips a weapon 
 	 */
-	public void EquipWeapon(Weapon weapon) {
+	public void EquipWeapon(HGWeapon weapon) {
 		if(weapon != null) {
 			UnequipWeapon();
 
@@ -224,7 +224,7 @@ public class CharacterInventory {
 
 			switch (weapon.weaponType) {
 				case WeaponType.Gun:
-		            ((Gun)_equippedWeapon).OnReloadDone = OnReloadDone;
+		            ((HGGun)_equippedWeapon).OnReloadDone = OnReloadDone;
 					break;
 				default:
 					break;
@@ -235,7 +235,7 @@ public class CharacterInventory {
 	/*
 	 * Unequips the item
 	 */
-	public void Unequip(Item item) {
+	public void Unequip(HGItem item) {
 		if(item != null) {
 			// Add(item); // Uncomment if we want to add unequipped items
 			Debug.Log("Unequipping item:" + item.name);
@@ -260,7 +260,7 @@ public class CharacterInventory {
 
 			switch (_equippedWeapon.weaponType) {
 				case WeaponType.Gun:
-		            ((Gun)_equippedWeapon).OnReloadDone -= OnReloadDone;
+		            ((HGGun)_equippedWeapon).OnReloadDone -= OnReloadDone;
 					break;
 				default:
 					break;
@@ -276,7 +276,7 @@ public class CharacterInventory {
 
 	public bool Reload(float reloadTimeModifier) {
 		if(_equippedWeapon != null && _equippedWeapon.weaponType == WeaponType.Gun) {
-			Gun equippedGun = (Gun)_equippedWeapon;
+			HGGun equippedGun = (HGGun)_equippedWeapon;
 
 			return equippedGun.Reload(reloadTimeModifier, GetAmmoCount(equippedGun.ammunitionType));
 		}
@@ -292,14 +292,14 @@ public class CharacterInventory {
 
     #endregion
 
-	private static bool RemoveBurntModifiers(AttributeModifier modifier) {
+	private static bool RemoveBurntModifiers(HGAttributeModifier modifier) {
 		return modifier.duration <= 0;
 	}
 
 	public void BurnDownModifiers(float timeDelta) {
 		_modifiers.RemoveAll(RemoveBurntModifiers);
 
-		foreach(AttributeModifier modifier in _modifiers) {
+		foreach(HGAttributeModifier modifier in _modifiers) {
 			if(modifier.duration != Mathf.Infinity) {
 				modifier.duration -= timeDelta;
 			}

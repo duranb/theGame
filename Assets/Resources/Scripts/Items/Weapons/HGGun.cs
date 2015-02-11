@@ -9,7 +9,7 @@ public enum GunType
 	Sniper
 }
 
-public class Gun : Weapon {
+public class HGGun : HGWeapon {
 	protected GameObject _ammunitionPrefab;
 
 	protected GunType _gunType;
@@ -36,7 +36,7 @@ public class Gun : Weapon {
 	public delegate void OnReloadDelegate(AmmunitionType type, int ammoLeft);
 	public OnReloadDelegate OnReloadDone;
 
-	public Gun(string weaponName, GunType gunType, AmmunitionType ammunitionType, GameObject ammunitionPrefab, float baseDamage, float baseEquipTime, float baseRate, float baseReloadTime, int baseClipSize) : base(weaponName, WeaponType.Gun, baseDamage, baseEquipTime, baseRate) {
+	public HGGun(string weaponName, GunType gunType, AmmunitionType ammunitionType, GameObject ammunitionPrefab, float baseDamage, float baseEquipTime, float baseRate, float baseReloadTime, int baseClipSize) : base(weaponName, WeaponType.Gun, baseDamage, baseEquipTime, baseRate) {
 		_gunType = gunType;
 		_ammunitionType = ammunitionType;
 
@@ -56,7 +56,7 @@ public class Gun : Weapon {
 		if(_currentClipAmmoCount > 0 && _weaponState == WeaponState.Ready/*!_isFiring && !_isReloading*/) {
 			// Fire projectile
 			GameObject ammoObject = (GameObject)MonoBehaviour.Instantiate(_ammunitionPrefab, position, direction);
-			Ammunition ammo = ammoObject.GetComponent<Ammunition>();
+			HGAmmunitionBehaviour ammo = ammoObject.GetComponent<HGAmmunitionBehaviour>();
 
 			ammo.Fire(this._baseDamage * attackDamageModifier);
 
