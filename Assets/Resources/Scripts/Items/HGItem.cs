@@ -1,13 +1,6 @@
 using UnityEngine;
 using System.Collections;
 
-public enum ItemType
-{
-	AttributeModifier,
-	Weapon,
-	Ammunition
-}
-
 public class HGItem {
 	public ItemType _itemType;
 	public string _name;

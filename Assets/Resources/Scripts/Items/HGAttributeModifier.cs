@@ -1,20 +1,6 @@
 using UnityEngine;
 using System.Collections;
 
-public enum AttributeModifierTypes
-{
-	Speed,
-	Jump,
-	Damage,
-	ReloadSpeed
-}
-
-public enum AttributeModifierMethod
-{
-	Additive,
-	Multiplicative
-}
-
 public class HGAttributeModifier : HGItem {
 	public AttributeModifierTypes _modifierType;
 	public AttributeModifierMethod _modifierMethod;

@@ -2,13 +2,6 @@ using UnityEngine;
 using System.Collections;
 using System.Timers;
 
-public enum GunType
-{
-	Revolver,
-	Rifle,
-	Sniper
-}
-
 public class HGGun : HGWeapon {
 	protected GameObject _ammunitionPrefab;
 
@@ -69,7 +62,7 @@ public class HGGun : HGWeapon {
 	        _attackTimer.Enabled = true;
     		_attackTimer.AutoReset = false; //Stops it from repeating
 	        // Hook up the Elapsed event for the timer. 
-	        _attackTimer.Elapsed += delegate { AttackWait(); };
+	        _attackTimer.Elapsed += delegate { AttackDone(); };
 		} else if(_currentClipAmmoCount == 0 && _weaponState == WeaponState.Ready) {
 			// OnEmptyReload();
 			SetState(WeaponState.Empty);
@@ -81,7 +74,8 @@ public class HGGun : HGWeapon {
 	/*
 	 * Used to throttle the firing rate
 	 */ 
-	private void AttackWait() {
+	public override void AttackDone() {
+		base.AttackDone();
 		if(_weaponState == WeaponState.Attacking) {
 			// _isFiring = false;
 			if(_currentClipAmmoCount == 0) {
@@ -116,7 +110,7 @@ public class HGGun : HGWeapon {
 	        _reloadTimer.Enabled = true;
 	    	_reloadTimer.AutoReset = false; //Stops it from repeating
 	        // Hook up the Elapsed event for the timer. 
-	        _reloadTimer.Elapsed += delegate {ReloadWait(currentAmmoCount); };
+	        _reloadTimer.Elapsed += delegate {ReloadDone(currentAmmoCount); };
 
 	        return true;
 	    }
@@ -129,7 +123,7 @@ public class HGGun : HGWeapon {
 	 *
 	 * currentAmmoCount - the count of ammo of the type used by the gun
 	 */
-	private void ReloadWait(int currentAmmoCount) {
+	private void ReloadDone(int currentAmmoCount) {
 		if(_weaponState == WeaponState.Reloading) {
 			int clipDeficit = _baseClipSize - _currentClipAmmoCount;
 

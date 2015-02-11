@@ -1,13 +1,6 @@
 using UnityEngine;
 using System.Collections;
 
-public enum AmmunitionType
-{
-	Revolver,
-	Rifle,
-	Length
-}
-
 public class HGAmmunitionBehaviour : MonoBehaviour {
 	protected AmmunitionType _ammunitionType;
 

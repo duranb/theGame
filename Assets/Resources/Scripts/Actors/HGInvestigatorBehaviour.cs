@@ -53,28 +53,6 @@ public class HGInvestigatorBehaviour : MonoBehaviour
 		Debug.Log(added + ", " + revolverAmmo.amount);
 	}
 
-	// void OnReloadDone(AmmunitionType ammunitionType, int currentAmmoCount) {
-	//     _ammoCount = currentAmmoCount;
-	//     Debug.Log("New ammo: " + _ammoCount);
-	// }
-
-	// void OnEmptyReload() {
-	//     ((Gun)_equippedWeapon).Reload(1, _ammoCount);
-	// }
-
-	// void EquipWeapon(Weapon weaponToEquip) {
-	//     // if(_equippedWeapon != null && _equippedWeapon.weaponType == WeaponType.Gun) {
-	//     //     ((Gun)_equippedWeapon).OnReloadDone -= OnReloadDone;
-	//     //     ((Gun)_equippedWeapon).OnEmptyReload -= OnEmptyReload;
-	//     // }
-
-	//     _equippedWeapon = weaponToEquip;
-	//     if(_equippedWeapon.weaponType == WeaponType.Gun) {
-	//         ((Gun)_equippedWeapon).OnReloadDone = OnReloadDone;
-	//         ((Gun)_equippedWeapon).OnEmptyReload = OnEmptyReload;
-	//     }
-	// }
-
 	#region Event Listeners
 
 	void OnControllerCollider( RaycastHit2D hit )

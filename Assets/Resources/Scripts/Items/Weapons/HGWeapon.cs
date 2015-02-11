@@ -2,22 +2,6 @@ using UnityEngine;
 using System.Collections;
 using System.Timers;
 
-public enum WeaponType
-{
-	Melee,
-	Gun
-}
-
-public enum WeaponState {
-	Equipping,
-	Attacking,
-	Reloading,
-	Ready,
-	Empty,
-	Unequipped,
-	Broken
-}
-
 public class HGWeapon : HGItem {
 	protected WeaponType _weaponType;
 
@@ -50,6 +34,10 @@ public class HGWeapon : HGItem {
 
 	public virtual WeaponState Attack(Vector3 position, Quaternion direction, float attackDamageModifier, float attackRateModifier) {
 		return WeaponState.Ready;
+	}
+
+	public virtual void AttackDone() {
+		
 	}
 
 	/*
