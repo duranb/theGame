@@ -13,7 +13,7 @@ public class HGGun : HGWeapon {
 
 	protected int _currentClipAmmoCount;
 
-	protected Timer _reloadTimer;
+	// protected Timer _reloadTimer;
 
 	// private bool _isFiring = false;
 	// private bool _isReloading = false;
@@ -90,32 +90,19 @@ public class HGGun : HGWeapon {
 	 * currentAmmoCount - the count of ammo of the type used by the gun
 	 * reloadTimeModifier - the attribute from the character to affect reload time
 	 */
-	public virtual bool Reload(float reloadTimeModifier, int currentAmmoCount) {
-		if(currentAmmoCount == 0 || _currentClipAmmoCount == _baseClipSize) {
-			return false;
+	public virtual float Reload(float reloadTimeModifier) {
+		if(_currentClipAmmoCount == _baseClipSize) {
+			return 0f;
 		}
 
 		if(_weaponState == WeaponState.Ready || _weaponState == WeaponState.Empty) {
-			// Debug.Log("RELOAD" + ", " + this.name + ", " + reloadTimeModifier + ", " + currentAmmoCount);
-			// int clipDeficit = _baseClipSize - _currentClipAmmoCount;
-
-			// int ammoLeft = currentAmmoCount - clipDeficit;
-			// _currentClipAmmoCount += (ammoLeft > 0) ? clipDeficit : currentAmmoCount;
-			// currentAmmoCount = (ammoLeft > 0) ? ammoLeft : 0;
-
-			// _isReloading = true;
 			SetState(WeaponState.Reloading);
 
-	        _reloadTimer = new Timer(this._baseReloadTime * reloadTimeModifier);
-	        _reloadTimer.Enabled = true;
-	    	_reloadTimer.AutoReset = false; //Stops it from repeating
-	        // Hook up the Elapsed event for the timer. 
-	        _reloadTimer.Elapsed += delegate {ReloadDone(currentAmmoCount); };
 
-	        return true;
+	        return _baseReloadTime * reloadTimeModifier;
 	    }
 
-	    return false;
+	    return 0f;
 	}
 
 	/*
@@ -123,24 +110,24 @@ public class HGGun : HGWeapon {
 	 *
 	 * currentAmmoCount - the count of ammo of the type used by the gun
 	 */
-	private void ReloadDone(int currentAmmoCount) {
+	public int ReloadDone(int currentAmmoCount) {
 		if(_weaponState == WeaponState.Reloading) {
 			int clipDeficit = _baseClipSize - _currentClipAmmoCount;
 
 			int ammoLeft = currentAmmoCount - clipDeficit;
 			_currentClipAmmoCount += (ammoLeft > 0) ? clipDeficit : currentAmmoCount;
 			currentAmmoCount = (ammoLeft > 0) ? ammoLeft : 0;
-			// _isReloading = false;
 			SetState(WeaponState.Ready);
-			OnReloadDone(_ammunitionType, currentAmmoCount);
-		}		
+		}
+
+		return currentAmmoCount;
 	}
 
 	public override void Unequip() {
 		base.Unequip();
 
-		if(_reloadTimer != null) {
-			_reloadTimer.Dispose();
-		}
+		// if(_reloadTimer != null) {
+		// 	_reloadTimer.Dispose();
+		// }
 	}
 }

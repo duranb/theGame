@@ -196,39 +196,44 @@ public class HGCharacterInventory {
 	/*
 	 * Equips the item at the selected index
 	 */
-	public void Equip(int atIndex) {
+	public float Equip(int atIndex) {
 		// Item item = GetItem(atIndex); // Uncomment if we want to remove equipped items
 		HGItem item = _items[atIndex];
 
 		Debug.Log("Equipping item:" + item.name);
+
+		float equipTime = 0;
 		if(item != null) {
 			switch (item.itemType) {
 				case ItemType.Weapon:
-					EquipWeapon((HGWeapon)item);
+					equipTime = EquipWeapon((HGWeapon)item);
 					break;
 				default:
 					break;
 			}
 		}
+
+		return equipTime;
 	}
 
 	/*
 	 * Equips a weapon 
 	 */
-	public void EquipWeapon(HGWeapon weapon) {
+	public float EquipWeapon(HGWeapon weapon) {
 		if(weapon != null) {
 			UnequipWeapon();
 
 			_equippedWeapon = weapon;
-			_equippedWeapon.Equip();
+			
+			return _equippedWeapon.Equip();
+		}
 
-			switch (weapon.weaponType) {
-				case WeaponType.Gun:
-		            ((HGGun)_equippedWeapon).OnReloadDone = OnReloadDone;
-					break;
-				default:
-					break;
-			}
+		return 0;
+	}
+
+	public void OnEquipDone() {
+		if(_equippedWeapon != null) {
+			_equippedWeapon.EquipDone();
 		}
 	}
 
@@ -260,7 +265,7 @@ public class HGCharacterInventory {
 
 			switch (_equippedWeapon.weaponType) {
 				case WeaponType.Gun:
-		            ((HGGun)_equippedWeapon).OnReloadDone -= OnReloadDone;
+		            // ((HGGun)_equippedWeapon).OnReloadDone -= OnReloadDone;
 					break;
 				default:
 					break;
@@ -274,20 +279,28 @@ public class HGCharacterInventory {
 
 	#region gun logic
 
-	public bool Reload(float reloadTimeModifier) {
-		if(_equippedWeapon != null && _equippedWeapon.weaponType == WeaponType.Gun) {
+	public float Reload(float reloadTimeModifier) {
+		if(_equippedWeapon != null && _equippedWeapon.weaponType == WeaponType.Gun && _ammunitions[(int)((HGGun)_equippedWeapon).ammunitionType] > 0) {
 			HGGun equippedGun = (HGGun)_equippedWeapon;
 
-			return equippedGun.Reload(reloadTimeModifier, GetAmmoCount(equippedGun.ammunitionType));
+			return equippedGun.Reload(reloadTimeModifier);
 		}
 
-		return false;
+		return 0f;
 	}
 
-    private void OnReloadDone(AmmunitionType ammunitionType, int currentAmmoCount) {
-        SetAmmoCount(ammunitionType, currentAmmoCount);
+    public void OnReloadDone() {
+    	// AmmunitionType ammunitionType, int currentAmmoCount
+    	if(_equippedWeapon != null) {
+    		HGGun equippedGun = (HGGun)_equippedWeapon;
+    		AmmunitionType ammunitionType = equippedGun.ammunitionType;
+        	int newAmmoAmmount = equippedGun.ReloadDone(_ammunitions[(int)ammunitionType]);
 
-        Debug.Log("New ammo: " + ammunitionType + " " + _ammunitions[(int)ammunitionType]);
+        	SetAmmoCount(ammunitionType, newAmmoAmmount);
+        	
+        	// Debug.Log("New ammo: " + ammunitionType + " " + _ammunitions[(int)ammunitionType]);
+        }
+
     }
 
     #endregion

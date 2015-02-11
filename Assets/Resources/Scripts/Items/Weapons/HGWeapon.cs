@@ -13,7 +13,7 @@ public class HGWeapon : HGItem {
 	protected float _baseEquipTime;
 
 	protected Timer _attackTimer;
-	protected Timer _equipTimer;
+	// protected Timer _equipTimer;
 
 	public WeaponType weaponType {
 		get { return _weaponType; }
@@ -37,7 +37,7 @@ public class HGWeapon : HGItem {
 	}
 
 	public virtual void AttackDone() {
-		
+
 	}
 
 	/*
@@ -49,14 +49,19 @@ public class HGWeapon : HGItem {
 	}
 
 
-	public virtual void Equip() {
+	public virtual float Equip() {
 		SetState(WeaponState.Equipping);
 
-        _equipTimer = new Timer(this._baseEquipTime);
-        _equipTimer.Enabled = true;
-		_equipTimer.AutoReset = false; //Stops it from repeating
-        // Hook up the Elapsed event for the timer. 
-        _equipTimer.Elapsed += delegate { SetState(WeaponState.Ready); };
+		return _baseEquipTime;
+  //       _equipTimer = new Timer(this._baseEquipTime);
+  //       _equipTimer.Enabled = true;
+		// _equipTimer.AutoReset = false; //Stops it from repeating
+  //       // Hook up the Elapsed event for the timer. 
+  //       _equipTimer.Elapsed += delegate { SetState(WeaponState.Ready); };
+	}
+
+	public void EquipDone() {
+		SetState(WeaponState.Ready);
 	}
 
 	public virtual void Unequip() {
@@ -65,8 +70,8 @@ public class HGWeapon : HGItem {
 		if(_attackTimer != null) {
 			_attackTimer.Dispose();
 		}
-		if(_equipTimer != null) {
-			_equipTimer.Dispose();
-		}
+		// if(_equipTimer != null) {
+		// 	_equipTimer.Dispose();
+		// }
 	}
 }

@@ -20,7 +20,7 @@ public class HGInvestigatorBehaviour : MonoBehaviour
 
 	private HGCharacterInventory _characterInventory;
 
-	private HGWeapon _equippedWeapon;
+	private HGCharacterAnimator _characterAnimator;
 
 	public int _inventorySize = 20;
 
@@ -35,6 +35,7 @@ public class HGInvestigatorBehaviour : MonoBehaviour
 
 		_characterInventory = new HGCharacterInventory(_inventorySize);
 		
+		_characterAnimator = new HGCharacterAnimator();
 
 		// For testing
 		HGRevolver revolver = new HGRevolver("Betsy", 100, 2000, 1000, 2000, 6);
@@ -127,16 +128,22 @@ public class HGInvestigatorBehaviour : MonoBehaviour
 			if(_characterInventory.equippedWeapon != null) {
 				WeaponState weaponState = _characterInventory.equippedWeapon.Attack(this.transform.position, this.transform.rotation, 1, 1);
 				if(weaponState == WeaponState.Empty) {
-					_characterInventory.Reload(1);
+					float reloadTime = _characterInventory.Reload(1);
+					_characterAnimator.Reload(reloadTime);
+					_characterAnimator.OnReloadDone = _characterInventory.OnReloadDone;
 				}
 			}
 		}
 
 		if(Input.GetKeyDown(KeyCode.Alpha1)) {
-			_characterInventory.Equip(0);
+			float equipTime = _characterInventory.Equip(0);
+			_characterAnimator.Equip(equipTime);
+			_characterAnimator.OnEquipDone = _characterInventory.OnEquipDone;
 		}
 		if(Input.GetKeyDown(KeyCode.Alpha2)) {
-			_characterInventory.Equip(1);
+			float equipTime = _characterInventory.Equip(1);
+			_characterAnimator.Equip(equipTime);
+			_characterAnimator.OnEquipDone = _characterInventory.OnEquipDone;
 		}
 	}
 
