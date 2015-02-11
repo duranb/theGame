@@ -12,9 +12,6 @@ public class HGWeapon : HGItem {
 
 	protected float _baseEquipTime;
 
-	protected Timer _attackTimer;
-	// protected Timer _equipTimer;
-
 	public WeaponType weaponType {
 		get { return _weaponType; }
 	}
@@ -32,8 +29,8 @@ public class HGWeapon : HGItem {
 		_baseEquipTime = baseEquipTime;
 	}
 
-	public virtual WeaponState Attack(Vector3 position, Quaternion direction, float attackDamageModifier, float attackRateModifier) {
-		return WeaponState.Ready;
+	public virtual float Attack(Vector3 position, Quaternion direction, float attackDamageModifier, float attackRateModifier) {
+		return _baseRate * attackRateModifier;
 	}
 
 	public virtual void AttackDone() {
@@ -53,11 +50,6 @@ public class HGWeapon : HGItem {
 		SetState(WeaponState.Equipping);
 
 		return _baseEquipTime;
-  //       _equipTimer = new Timer(this._baseEquipTime);
-  //       _equipTimer.Enabled = true;
-		// _equipTimer.AutoReset = false; //Stops it from repeating
-  //       // Hook up the Elapsed event for the timer. 
-  //       _equipTimer.Elapsed += delegate { SetState(WeaponState.Ready); };
 	}
 
 	public void EquipDone() {
@@ -66,12 +58,5 @@ public class HGWeapon : HGItem {
 
 	public virtual void Unequip() {
 		SetState(WeaponState.Unequipped);
-
-		if(_attackTimer != null) {
-			_attackTimer.Dispose();
-		}
-		// if(_equipTimer != null) {
-		// 	_equipTimer.Dispose();
-		// }
 	}
 }

@@ -126,11 +126,13 @@ public class HGInvestigatorBehaviour : MonoBehaviour
 
 		if(Input.GetKey(KeyCode.Space)) {
 			if(_characterInventory.equippedWeapon != null) {
-				WeaponState weaponState = _characterInventory.equippedWeapon.Attack(this.transform.position, this.transform.rotation, 1, 1);
-				if(weaponState == WeaponState.Empty) {
+				float attackTime = _characterInventory.equippedWeapon.Attack(this.transform.position, this.transform.rotation, 1, 1);
+				_characterAnimator.Attack(attackTime);
+				_characterAnimator.OnAttackDone = _characterInventory.equippedWeapon.AttackDone;
+				if(_characterInventory.equippedWeapon.weaponState == WeaponState.Empty) {
 					float reloadTime = _characterInventory.Reload(1);
 					_characterAnimator.Reload(reloadTime);
-					_characterAnimator.OnReloadDone = _characterInventory.OnReloadDone;
+					_characterAnimator.OnReloadDone = _characterInventory.ReloadDone;
 				}
 			}
 		}
@@ -138,12 +140,12 @@ public class HGInvestigatorBehaviour : MonoBehaviour
 		if(Input.GetKeyDown(KeyCode.Alpha1)) {
 			float equipTime = _characterInventory.Equip(0);
 			_characterAnimator.Equip(equipTime);
-			_characterAnimator.OnEquipDone = _characterInventory.OnEquipDone;
+			_characterAnimator.OnEquipDone = _characterInventory.EquipDone;
 		}
 		if(Input.GetKeyDown(KeyCode.Alpha2)) {
 			float equipTime = _characterInventory.Equip(1);
 			_characterAnimator.Equip(equipTime);
-			_characterAnimator.OnEquipDone = _characterInventory.OnEquipDone;
+			_characterAnimator.OnEquipDone = _characterInventory.EquipDone;
 		}
 	}
 

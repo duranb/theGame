@@ -34,6 +34,17 @@ public class HGCharacterAnimator {
 	}
 
 	public void Attack(float time) {
+		if(time > 0) {
+			CancelAnimations();
+
+	        _attackTimer = new Timer(time);
+	        _attackTimer.Enabled = true;
+			_attackTimer.AutoReset = false; //Stops it from repeating
+	        // Hook up the Elapsed event for the timer. 
+	        _attackTimer.Elapsed += delegate {
+	        	OnAttackDone(); 
+	        };
+	    }
 	}
 
 	public void Reload(float time) {

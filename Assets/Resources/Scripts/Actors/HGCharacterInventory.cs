@@ -224,14 +224,14 @@ public class HGCharacterInventory {
 			UnequipWeapon();
 
 			_equippedWeapon = weapon;
-			
+
 			return _equippedWeapon.Equip();
 		}
 
 		return 0;
 	}
 
-	public void OnEquipDone() {
+	public void EquipDone() {
 		if(_equippedWeapon != null) {
 			_equippedWeapon.EquipDone();
 		}
@@ -289,7 +289,7 @@ public class HGCharacterInventory {
 		return 0f;
 	}
 
-    public void OnReloadDone() {
+    public void ReloadDone() {
     	// AmmunitionType ammunitionType, int currentAmmoCount
     	if(_equippedWeapon != null) {
     		HGGun equippedGun = (HGGun)_equippedWeapon;

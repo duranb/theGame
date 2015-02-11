@@ -13,10 +13,6 @@ public class HGGun : HGWeapon {
 
 	protected int _currentClipAmmoCount;
 
-	// protected Timer _reloadTimer;
-
-	// private bool _isFiring = false;
-	// private bool _isReloading = false;
 	public GunType gunType {
 		get { return _gunType; }
 	}
@@ -45,7 +41,8 @@ public class HGGun : HGWeapon {
 	 * attackDamageModifier - the attribute from the character to affect damage
 	 * attackRateModifier - the attribute from the character to affect rate of fire
 	 */
-	public override WeaponState Attack(Vector3 position, Quaternion direction, float attackDamageModifier, float attackRateModifier) {
+	public override float Attack(Vector3 position, Quaternion direction, float attackDamageModifier, float attackRateModifier) {
+		float attackTime = 0;
 		if(_currentClipAmmoCount > 0 && _weaponState == WeaponState.Ready/*!_isFiring && !_isReloading*/) {
 			// Fire projectile
 			GameObject ammoObject = (GameObject)MonoBehaviour.Instantiate(_ammunitionPrefab, position, direction);
@@ -55,20 +52,13 @@ public class HGGun : HGWeapon {
 
 			_currentClipAmmoCount--;
 
-			// _isFiring = true;
 			SetState(WeaponState.Attacking);
-
-	        _attackTimer = new Timer(this._baseRate * attackRateModifier);
-	        _attackTimer.Enabled = true;
-    		_attackTimer.AutoReset = false; //Stops it from repeating
-	        // Hook up the Elapsed event for the timer. 
-	        _attackTimer.Elapsed += delegate { AttackDone(); };
+			attackTime = this._baseRate * attackRateModifier;
 		} else if(_currentClipAmmoCount == 0 && _weaponState == WeaponState.Ready) {
-			// OnEmptyReload();
 			SetState(WeaponState.Empty);
 		}
 
-		return _weaponState;
+		return attackTime;
 	}
 
 	/*
@@ -125,9 +115,5 @@ public class HGGun : HGWeapon {
 
 	public override void Unequip() {
 		base.Unequip();
-
-		// if(_reloadTimer != null) {
-		// 	_reloadTimer.Dispose();
-		// }
 	}
 }
