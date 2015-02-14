@@ -6,7 +6,8 @@ public enum ItemType
 {
 	AttributeModifier,
 	Weapon,
-	Ammunition
+	Ammunition,
+	Armor
 }
 
 public enum AttributeModifierTypes
@@ -51,4 +52,14 @@ public enum WeaponState {
 	Empty,
 	Unequipped,
 	Broken
+}
+
+public enum ArmorType {
+	Head,
+	Body,
+	Arms,
+	Hands,
+	Legs,
+	Feet,
+	Belt
 }

@@ -1,6 +1,5 @@
 using UnityEngine;
 using System.Collections;
-using System.Timers;
 
 public class HGGun : HGWeapon {
 	protected GameObject _ammunitionPrefab;
@@ -25,7 +24,8 @@ public class HGGun : HGWeapon {
 	public delegate void OnReloadDelegate(AmmunitionType type, int ammoLeft);
 	public OnReloadDelegate OnReloadDone;
 
-	public HGGun(string weaponName, GunType gunType, AmmunitionType ammunitionType, GameObject ammunitionPrefab, float baseDamage, float baseEquipTime, float baseRate, float baseReloadTime, int baseClipSize) : base(weaponName, WeaponType.Gun, baseDamage, baseEquipTime, baseRate) {
+	public HGGun(string weaponName, GunType gunType, AmmunitionType ammunitionType, GameObject ammunitionPrefab, float baseDamage, float baseEquipTime, float baseRate, float baseReloadTime, int baseClipSize, int currentClipAmmoCount) 
+	: base(weaponName, WeaponType.Gun, baseDamage, baseEquipTime, baseRate) {
 		_gunType = gunType;
 		_ammunitionType = ammunitionType;
 
@@ -33,6 +33,8 @@ public class HGGun : HGWeapon {
 
 		_baseReloadTime = baseReloadTime;
 		_baseClipSize = baseClipSize;
+
+		_currentClipAmmoCount = currentClipAmmoCount;
 	}
 
 	/*
@@ -77,7 +79,6 @@ public class HGGun : HGWeapon {
 	}
 
 	/*
-	 * currentAmmoCount - the count of ammo of the type used by the gun
 	 * reloadTimeModifier - the attribute from the character to affect reload time
 	 */
 	public virtual float Reload(float reloadTimeModifier) {

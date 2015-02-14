@@ -38,8 +38,8 @@ public class HGInvestigatorBehaviour : MonoBehaviour
 		_characterAnimator = new HGCharacterAnimator();
 
 		// For testing
-		HGRevolver revolver = new HGRevolver("Betsy", 100, 2000, 1000, 2000, 6);
-		HGRevolver revolverr = new HGRevolver("Bettsy", 100, 3000, 1000, 2000, 6);
+		HGRevolver revolver = new HGRevolver("Betsy", 100, 2000, 1000, 2000, 6, 5);
+		HGRevolver revolverr = new HGRevolver("Bettsy", 100, 3000, 1000, 2000, 6, 1);
 		HGAmmunitionPickup revolverAmmo = new HGAmmunitionPickup(AmmunitionType.Revolver, 40);
 
 		// Set up inventory

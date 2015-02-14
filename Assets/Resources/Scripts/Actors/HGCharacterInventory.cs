@@ -148,6 +148,7 @@ public class HGCharacterInventory {
 
 	/*
 	 * Put an item in the provided index
+	 * item - the HGItem to insert
 	 * atIndex - the index to insert the item
 	 *
 	 * returns an item if an item was previously at the desired index 
@@ -290,7 +291,6 @@ public class HGCharacterInventory {
 	}
 
     public void ReloadDone() {
-    	// AmmunitionType ammunitionType, int currentAmmoCount
     	if(_equippedWeapon != null) {
     		HGGun equippedGun = (HGGun)_equippedWeapon;
     		AmmunitionType ammunitionType = equippedGun.ammunitionType;

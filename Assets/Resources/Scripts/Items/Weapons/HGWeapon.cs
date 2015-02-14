@@ -1,6 +1,5 @@
 using UnityEngine;
 using System.Collections;
-using System.Timers;
 
 public class HGWeapon : HGItem {
 	protected WeaponType _weaponType;
@@ -20,7 +19,8 @@ public class HGWeapon : HGItem {
 		get { return _weaponState; }
 	}
 	
-	public HGWeapon(string weaponName, WeaponType weaponType, float baseDamage, float baseEquipTime, float baseRate) : base(weaponName, ItemType.Weapon) {
+	public HGWeapon(string weaponName, WeaponType weaponType, float baseDamage, float baseEquipTime, float baseRate) 
+	: base(weaponName, ItemType.Weapon) {
 		_weaponType = weaponType;
 
 		_baseDamage = baseDamage;
@@ -33,9 +33,7 @@ public class HGWeapon : HGItem {
 		return _baseRate * attackRateModifier;
 	}
 
-	public virtual void AttackDone() {
-
-	}
+	public virtual void AttackDone() {}
 
 	/*
 	 * weaponState - the new state of the weapon
