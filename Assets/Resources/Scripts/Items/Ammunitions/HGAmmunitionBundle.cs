@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class HGAmmunitionPickup : HGItem {
+public class HGAmmunitionBundle : HGItem {
 	protected AmmunitionType _ammoType;
 
 	protected int _amount;
@@ -15,7 +15,8 @@ public class HGAmmunitionPickup : HGItem {
 		get { return _ammoType; }
 	}
 	
-	public HGAmmunitionPickup(AmmunitionType ammoType, int amount) : base("Ammo", ItemType.Ammunition) {
+	public HGAmmunitionBundle(AmmunitionType ammoType, int amount) 
+	: base("Ammo", ItemType.Ammunition) {
 		_ammoType = ammoType;
 		_amount = amount;
 	}

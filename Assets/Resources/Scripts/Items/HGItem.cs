@@ -2,9 +2,9 @@ using UnityEngine;
 using System.Collections;
 
 public class HGItem {
-	public ItemType _itemType;
-	public string _name;
-	public float _duration = Mathf.Infinity;
+	protected ItemType _itemType;
+	protected string _name;
+	protected float _duration = Mathf.Infinity;
 
 	public string name {
 		get { return _name; }
@@ -20,12 +20,9 @@ public class HGItem {
 		set { _duration = value; }
 	}
 
-	public HGItem(string name, ItemType itemType) {
+	public HGItem(string name, ItemType itemType, float duration = Mathf.Infinity) {
 		_name = name;
 		_itemType = itemType;
+		_duration = duration;
 	}
-
-	// void Start() {
-	// 	this.gameObject.tag = "Item";
-	// }
 }

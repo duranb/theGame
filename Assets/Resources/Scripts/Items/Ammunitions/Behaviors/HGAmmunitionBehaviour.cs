@@ -14,10 +14,6 @@ public class HGAmmunitionBehaviour : MonoBehaviour {
 		StartCoroutine(Life());
 	}
 
-	private void Expire() {
-		Destroy(this.gameObject);
-	}
-
 	private IEnumerator Life() {
 		yield return new WaitForSeconds(_lifeSpan);
 		Expire();
@@ -25,5 +21,9 @@ public class HGAmmunitionBehaviour : MonoBehaviour {
 
 	private void OnTriggerEnter2D(Collider2D collider) {
 		Expire();
+	}
+
+	private void Expire() {
+		Destroy(this.gameObject);
 	}
 }

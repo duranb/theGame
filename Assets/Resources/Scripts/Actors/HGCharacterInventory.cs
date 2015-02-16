@@ -87,28 +87,22 @@ public class HGCharacterInventory {
 				isAdded = true;
 				break;
 			case ItemType.Ammunition:
-				HGAmmunitionPickup ammoPickup = (HGAmmunitionPickup)item;
+				HGAmmunitionBundle ammoPickup = (HGAmmunitionBundle)item;
 
-				// int ammoTypeIndex = (int)ammoPickup.ammoType;
 				AmmunitionType ammoType = ammoPickup.ammoType;
 				int ammoCapacity = GetAmmoCapacity(ammoType);
 				int newAmmoAmount = GetAmmoCount(ammoType) + ammoPickup.amount;
-				// _ammunitions[ammoTypeIndex] += ammoPickup.amount;
-
-				// bool didOverflow = _ammunitions[ammoTypeIndex] > _ammunitionCapacities[ammoTypeIndex];
 				bool didOverflow = newAmmoAmount > ammoCapacity;
 
 				// If the ammunitions overflowed we don't want to completely get rid of the item picked up
 				isAdded = !didOverflow;
 				if(didOverflow) {
 					int overflowedBy = newAmmoAmount - ammoCapacity;
-					// int overflowedBy = _ammunitions[ammoTypeIndex] - _ammunitionCapacities[ammoTypeIndex];
 
 					// We set the picked up ammo amount by the overflowed value
 					ammoPickup.amount = overflowedBy;
 				}
 
-				// _ammunitions[ammoTypeIndex] = (didOverflow) ? _ammunitionCapacities[ammoTypeIndex] : _ammunitions[ammoTypeIndex];				
 				newAmmoAmount = (didOverflow) ? ammoCapacity : newAmmoAmount;
 				SetAmmoCount(ammoType, newAmmoAmount);
 				break;

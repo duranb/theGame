@@ -37,21 +37,7 @@ public class HGInvestigatorBehaviour : MonoBehaviour
 		
 		_characterAnimator = new HGCharacterAnimator();
 
-		// For testing
-		HGRevolver revolver = new HGRevolver("Betsy", 100, 2000, 1000, 2000, 6, 5);
-		HGRevolver revolverr = new HGRevolver("Bettsy", 100, 3000, 1000, 2000, 6, 1);
-		HGAmmunitionPickup revolverAmmo = new HGAmmunitionPickup(AmmunitionType.Revolver, 40);
-
-		// Set up inventory
-		_characterInventory.Add(revolver);
-		_characterInventory.Add(revolverr);
-
 		_characterInventory.SetAmmoCapacity(AmmunitionType.Revolver, 30);
-
-		bool added = _characterInventory.Add(revolverAmmo);
-
-		// Should print "false, 10"
-		Debug.Log(added + ", " + revolverAmmo.amount);
 	}
 
 	#region Event Listeners
@@ -70,6 +56,15 @@ public class HGInvestigatorBehaviour : MonoBehaviour
 	void OnTriggerEnterEvent( Collider2D col )
 	{
 		Debug.Log( "onTriggerEnterEvent: " + col.gameObject.name );
+
+		HGItemPickupBehaviour itemPickup = col.gameObject.GetComponent<HGItemPickupBehaviour>();
+		if(itemPickup != null) {
+			HGItem item = itemPickup.GetItem();
+
+			if(_characterInventory.Add(item)) {
+				itemPickup.Pickup();
+			}
+		}
 	}
 
 
@@ -148,5 +143,4 @@ public class HGInvestigatorBehaviour : MonoBehaviour
 			_characterAnimator.OnEquipDone = _characterInventory.EquipDone;
 		}
 	}
-
 }
