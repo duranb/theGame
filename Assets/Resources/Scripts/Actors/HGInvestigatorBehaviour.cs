@@ -28,7 +28,6 @@ public class HGInvestigatorBehaviour : MonoBehaviour
 	{
 		_controller = GetComponent<HGCharacterController>();
 
-		// listen to some events for illustration purposes
 		_controller.OnControllerCollidedEvent += OnControllerCollider;
 		_controller.OnTriggerEnterEvent += OnTriggerEnterEvent;
 		_controller.OnTriggerExitEvent += OnTriggerExitEvent;
@@ -47,15 +46,12 @@ public class HGInvestigatorBehaviour : MonoBehaviour
 		// bail out on plain old ground hits cause they arent very interesting
 		if( hit.normal.y == 1f )
 			return;
-
-		// logs any collider hits if uncommented. it gets noisy so it is commented out for the demo
-		//Debug.Log( "flags: " + _controller.collisionState + ", hit.normal: " + hit.normal );
 	}
 
 
 	void OnTriggerEnterEvent( Collider2D col )
 	{
-		Debug.Log( "onTriggerEnterEvent: " + col.gameObject.name );
+		//Debug.Log( "onTriggerEnterEvent: " + col.gameObject.name );
 
 		HGItemPickupBehaviour itemPickup = col.gameObject.GetComponent<HGItemPickupBehaviour>();
 		if(itemPickup != null) {
@@ -70,77 +66,98 @@ public class HGInvestigatorBehaviour : MonoBehaviour
 
 	void OnTriggerExitEvent( Collider2D col )
 	{
-		Debug.Log( "onTriggerExitEvent: " + col.gameObject.name );
+		//Debug.Log( "onTriggerExitEvent: " + col.gameObject.name );
 	}
 
 	#endregion
 
+    private void DoMovementInput()
+    {
+        // grab our current _velocity to use as a base for all calculations
+        _velocity = _controller._velocity;
+
+        if (_controller._isGrounded)
+            _velocity.y = 0;
+
+        //if (Input.GetKeyDown(KeyCode.RightArrow))
+        //    transform.rotation = Quaternion.LookRotation(Vector3.right);
+        //else if (Input.GetKeyDown(KeyCode.LeftArrow))
+        //    transform.rotation = Quaternion.LookRotation(-Vector3.right);
+
+        if (Input.GetKey(KeyCode.RightArrow))
+        {
+            _normalizedHorizontalSpeed = 1;
+            if (transform.localScale.x < 0f)
+                transform.localScale = new Vector3(-transform.localScale.x, transform.localScale.y, transform.localScale.z);
+        }
+        else if (Input.GetKey(KeyCode.LeftArrow))
+        {
+            _normalizedHorizontalSpeed = -1;
+            if (transform.localScale.x > 0f)
+                transform.localScale = new Vector3(-transform.localScale.x, transform.localScale.y, transform.localScale.z);
+        }
+        else
+        {
+            _normalizedHorizontalSpeed = 0;
+        }
+
+        // we can only jump while grounded
+        if (_controller._isGrounded && Input.GetKeyDown(KeyCode.UpArrow))
+        {
+            _velocity.y = Mathf.Sqrt(2f * _jumpHeight * -_gravity);
+        }
+
+
+        // apply horizontal speed smoothing it
+        var smoothedMovementFactor = _controller._isGrounded ? _groundDamping : _inAirDamping; // how fast do we change direction?
+        _velocity.x = Mathf.Lerp(_velocity.x, _normalizedHorizontalSpeed * _runSpeed, Time.deltaTime * smoothedMovementFactor);
+
+        // apply gravity before moving
+        _velocity.y += _gravity * Time.deltaTime;
+
+        _controller.move(_velocity * Time.deltaTime);
+    }
+
+    private void DoWeaponInput()
+    {
+        if (Input.GetKey(KeyCode.Space))
+        {
+            if (_characterInventory.equippedWeapon != null)
+            {
+                float attackTime = _characterInventory.equippedWeapon.Attack(this.transform.position, this.transform.rotation, 1, 1);
+                _characterAnimator.Attack(attackTime);
+                _characterAnimator.OnAttackDone = _characterInventory.equippedWeapon.AttackDone;
+                if (_characterInventory.equippedWeapon.weaponState == WeaponState.Empty)
+                {
+                    float reloadTime = _characterInventory.Reload(1);
+                    _characterAnimator.Reload(reloadTime);
+                    _characterAnimator.OnReloadDone = _characterInventory.ReloadDone;
+                }
+            }
+        }
+    }
+
+    private void DoInventoryInput()
+    {
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+        {
+            float equipTime = _characterInventory.Equip(0);
+            _characterAnimator.Equip(equipTime);
+            _characterAnimator.OnEquipDone = _characterInventory.EquipDone;
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha2))
+        {
+            float equipTime = _characterInventory.Equip(1);
+            _characterAnimator.Equip(equipTime);
+            _characterAnimator.OnEquipDone = _characterInventory.EquipDone;
+        }
+    }
 
 	// the Update loop contains a very simple example of moving the character around and controlling the animation
 	void Update()
 	{
-		// grab our current _velocity to use as a base for all calculations
-		_velocity = _controller._velocity;
-
-		if( _controller._isGrounded )
-			_velocity.y = 0;
-
-		if( Input.GetKey( KeyCode.RightArrow ) )
-		{
-			_normalizedHorizontalSpeed = 1;
-			if( transform.localScale.x < 0f )
-				transform.localScale = new Vector3( -transform.localScale.x, transform.localScale.y, transform.localScale.z );
-		}
-		else if( Input.GetKey( KeyCode.LeftArrow ) )
-		{
-			_normalizedHorizontalSpeed = -1;
-			if( transform.localScale.x > 0f )
-				transform.localScale = new Vector3( -transform.localScale.x, transform.localScale.y, transform.localScale.z );
-		}
-		else
-		{
-			_normalizedHorizontalSpeed = 0;
-		}
-
-
-		// we can only jump whilst grounded
-		if( _controller._isGrounded && Input.GetKeyDown( KeyCode.UpArrow ) )
-		{
-			_velocity.y = Mathf.Sqrt( 2f * _jumpHeight * -_gravity );
-		}
-
-
-		// apply horizontal speed smoothing it
-		var smoothedMovementFactor = _controller._isGrounded ? _groundDamping : _inAirDamping; // how fast do we change direction?
-		_velocity.x = Mathf.Lerp( _velocity.x, _normalizedHorizontalSpeed * _runSpeed, Time.deltaTime * smoothedMovementFactor );
-
-		// apply gravity before moving
-		_velocity.y += _gravity * Time.deltaTime;
-
-		_controller.move( _velocity * Time.deltaTime );
-
-		if(Input.GetKey(KeyCode.Space)) {
-			if(_characterInventory.equippedWeapon != null) {
-				float attackTime = _characterInventory.equippedWeapon.Attack(this.transform.position, this.transform.rotation, 1, 1);
-				_characterAnimator.Attack(attackTime);
-				_characterAnimator.OnAttackDone = _characterInventory.equippedWeapon.AttackDone;
-				if(_characterInventory.equippedWeapon.weaponState == WeaponState.Empty) {
-					float reloadTime = _characterInventory.Reload(1);
-					_characterAnimator.Reload(reloadTime);
-					_characterAnimator.OnReloadDone = _characterInventory.ReloadDone;
-				}
-			}
-		}
-
-		if(Input.GetKeyDown(KeyCode.Alpha1)) {
-			float equipTime = _characterInventory.Equip(0);
-			_characterAnimator.Equip(equipTime);
-			_characterAnimator.OnEquipDone = _characterInventory.EquipDone;
-		}
-		if(Input.GetKeyDown(KeyCode.Alpha2)) {
-			float equipTime = _characterInventory.Equip(1);
-			_characterAnimator.Equip(equipTime);
-			_characterAnimator.OnEquipDone = _characterInventory.EquipDone;
-		}
+        DoMovementInput();
+        DoInventoryInput();
+        DoWeaponInput();
 	}
 }
