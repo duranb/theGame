@@ -44,6 +44,14 @@ public enum RangedWeaponType
 	Sniper
 }
 
+public enum MeleeWeaponType
+{
+	Knuckles,
+	Axe,
+	Sword,
+	Knife
+}
+
 public enum WeaponType
 {
 	Melee,

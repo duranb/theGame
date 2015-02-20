@@ -6,6 +6,8 @@ public class HGWeapon : HGItem {
 
 	protected WeaponState _weaponState = WeaponState.Unequipped;
 
+	protected Vector3 _attackOffset;
+
 	protected float _baseDamage;
 	protected float _baseAttackRate;
 
@@ -24,14 +26,17 @@ public class HGWeapon : HGItem {
 	/*
 	 * weaponName - the name of the weapon
 	 * weaponType - the type of the weapon
+	 * attackOffset - the offset to start an attack from
 	 * baseDamage - the base damage of the weapon
 	 * baseEquipTime - the base equipping time of the weapon
 	 * baseAttackRate - the base attack rate of the weapon
 	 * baseAccuracy(optional) - the base accuracy of the weapon
 	 */
-	public HGWeapon(string weaponName, WeaponType weaponType, float baseDamage, float baseEquipTime, float baseAttackRate, float baseAccuracy = 1.0f) 
+	public HGWeapon(string weaponName, WeaponType weaponType, Vector3 attackOffset, float baseDamage, float baseEquipTime, float baseAttackRate, float baseAccuracy = 1.0f) 
 	: base(weaponName, ItemType.Weapon) {
 		_weaponType = weaponType;
+
+		_attackOffset = attackOffset;
 
 		_baseDamage = baseDamage;
 		_baseAttackRate = baseAttackRate;

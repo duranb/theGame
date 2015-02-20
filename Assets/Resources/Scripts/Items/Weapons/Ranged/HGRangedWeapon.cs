@@ -31,6 +31,7 @@ public class HGRangedWeapon : HGWeapon {
 	/*
 	 * weaponName - the name of the weapon
 	 * rangedWeaponType - the type of the ranged weapon
+	 * attackOffset - the offset to start an attack from
 	 * ammunitionType - the type of the ammunition
 	 * ammunitionPrefab - the loaded prefab of the ammunition
 	 * ammunitionScale - the scale of the ammunition model
@@ -46,8 +47,8 @@ public class HGRangedWeapon : HGWeapon {
 	 *
 	 * NOTE: a currentClipAmmunitionCount of -1 indicates infinite ammunition
 	 */
-	public HGRangedWeapon(string weaponName, RangedWeaponType rangedWeaponType, AmmunitionType ammunitionType, GameObject ammunitionPrefab, Vector3 ammunitionScale, TrajectoryType ammunitionTrajectoryType, float baseDamage, float baseEquipTime, float baseAttackRate, float baseReloadTime, int baseClipSize, float baseAccuracy = 1.0f, int currentClipAmmunitionCount = 0, float ammunitionVelocityModifier = 1.0f) 
-	: base(weaponName, WeaponType.Ranged, baseDamage, baseEquipTime, baseAttackRate, baseAccuracy) {
+	public HGRangedWeapon(string weaponName, RangedWeaponType rangedWeaponType, Vector3 attackOffset, AmmunitionType ammunitionType, GameObject ammunitionPrefab, Vector3 ammunitionScale, TrajectoryType ammunitionTrajectoryType, float baseDamage, float baseEquipTime, float baseAttackRate, float baseReloadTime, int baseClipSize, float baseAccuracy = 1.0f, int currentClipAmmunitionCount = 0, float ammunitionVelocityModifier = 1.0f) 
+	: base(weaponName, WeaponType.Ranged, attackOffset, baseDamage, baseEquipTime, baseAttackRate, baseAccuracy) {
 		_rangedWeaponType = rangedWeaponType;
 		_ammunitionType = ammunitionType;
 
@@ -75,12 +76,15 @@ public class HGRangedWeapon : HGWeapon {
 		float attackTime = 0;
 		if((_currentClipAmmunitionCount > 0 || _currentClipAmmunitionCount == -1) && this._weaponState == WeaponState.Ready) {
 			// Fire projectile
-			GameObject ammunitionObject = (GameObject)MonoBehaviour.Instantiate(_ammunitionPrefab, position, Quaternion.identity);
+			float accuracy = this._baseAccuracy * attackAccuracyModifier;
+			direction.y += Random.Range(-(1f - (1f * accuracy)), (1f - (1f * accuracy)));
+
+			Vector3 attackPosition = position + Vector3.Scale(this._attackOffset, new Vector3(direction.x, 1f, 1f));
+
+			GameObject ammunitionObject = (GameObject)MonoBehaviour.Instantiate(_ammunitionPrefab, attackPosition, Quaternion.identity);
 			
 			HGAmmunitionBehaviour ammunition = ammunitionObject.GetComponent<HGAmmunitionBehaviour>();
 
-			float accuracy = this._baseAccuracy * attackAccuracyModifier;
-			direction.y += Random.Range(-(1f - (1f * accuracy)), (1f - (1f * accuracy)));
 			
 			ammunitionObject.transform.localScale = Vector3.Scale(ammunitionObject.transform.localScale, _ammunitionScale);
 			ammunition.Fire(this._baseDamage * attackDamageModifier, direction, _ammunitionTrajectoryType, _ammunitionVelocityModifier * velocityModifier);

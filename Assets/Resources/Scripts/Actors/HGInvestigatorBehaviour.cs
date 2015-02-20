@@ -127,6 +127,8 @@ public class HGInvestigatorBehaviour : MonoBehaviour
                 float attackTime = 0f;
                 if(_characterInventory.equippedWeapon.weaponType == WeaponType.Ranged) {
                     attackTime = ((HGRangedWeapon)_characterInventory.equippedWeapon).Shoot(this.transform.position, this.transform.right * this.transform.localScale.x, 1f, 1f, 1f);
+                } else if(_characterInventory.equippedWeapon.weaponType == WeaponType.Melee) {
+                    attackTime = ((HGMeleeWeapon)_characterInventory.equippedWeapon).Swing(this.transform.position, this.transform.right * this.transform.localScale.x, 1f, 1f, 1f);
                 }
                 _characterAnimator.Attack(attackTime);
                 _characterAnimator.OnAttackDone = _characterInventory.equippedWeapon.AttackDone;
