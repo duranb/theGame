@@ -45,29 +45,29 @@ public class HGCharacterInventory {
 	/*
 	 * Set a new capacity for an ammunition type
 	 */
-	public void SetAmmoCapacity(AmmunitionType ammoType, int newCapacity) {
-		_ammunitionCapacities[(int)ammoType] = newCapacity;
+	public void SetAmmunitionCapacity(AmmunitionType ammunitionType, int newCapacity) {
+		_ammunitionCapacities[(int)ammunitionType] = newCapacity;
 	}
 
 	/*
 	 * Helper function to get the capacity for an ammunition type
 	 */
-	public int GetAmmoCapacity(AmmunitionType ammoType) {
-		return _ammunitionCapacities[(int)ammoType];
+	public int GetAmmunitionCapacity(AmmunitionType ammunitionType) {
+		return _ammunitionCapacities[(int)ammunitionType];
 	}
 
 	/*
 	 * Helper function to set a new amount of ammunition of a certain type
 	 */
-	public void SetAmmoCount(AmmunitionType ammoType, int newCount) {
-		_ammunitions[(int)ammoType] = newCount;
+	public void SetAmmunitionCount(AmmunitionType ammunitionType, int newCount) {
+		_ammunitions[(int)ammunitionType] = newCount;
 	}
 
 	/*
 	 * Helper function to get a the amount of ammunition of a certain type
 	 */
-	public int GetAmmoCount(AmmunitionType ammoType) {
-		return _ammunitions[(int)ammoType];
+	public int GetAmmunitionCount(AmmunitionType ammunitionType) {
+		return _ammunitions[(int)ammunitionType];
 	}
 
 	#region inventory interaction
@@ -87,24 +87,24 @@ public class HGCharacterInventory {
 				isAdded = true;
 				break;
 			case ItemType.Ammunition:
-				HGAmmunitionBundle ammoPickup = (HGAmmunitionBundle)item;
+				HGAmmunitionBundle ammunitionPickup = (HGAmmunitionBundle)item;
 
-				AmmunitionType ammoType = ammoPickup.ammoType;
-				int ammoCapacity = GetAmmoCapacity(ammoType);
-				int newAmmoAmount = GetAmmoCount(ammoType) + ammoPickup.amount;
-				bool didOverflow = newAmmoAmount > ammoCapacity;
+				AmmunitionType ammunitionType = ammunitionPickup.ammunitionType;
+				int ammunitionCapacity = GetAmmunitionCapacity(ammunitionType);
+				int newAmmunitionAmount = GetAmmunitionCount(ammunitionType) + ammunitionPickup.amount;
+				bool didOverflow = newAmmunitionAmount > ammunitionCapacity;
 
 				// If the ammunitions overflowed we don't want to completely get rid of the item picked up
 				isAdded = !didOverflow;
 				if(didOverflow) {
-					int overflowedBy = newAmmoAmount - ammoCapacity;
+					int overflowedBy = newAmmunitionAmount - ammunitionCapacity;
 
-					// We set the picked up ammo amount by the overflowed value
-					ammoPickup.amount = overflowedBy;
+					// We set the picked up ammunition amount by the overflowed value
+					ammunitionPickup.amount = overflowedBy;
 				}
 
-				newAmmoAmount = (didOverflow) ? ammoCapacity : newAmmoAmount;
-				SetAmmoCount(ammoType, newAmmoAmount);
+				newAmmunitionAmount = (didOverflow) ? ammunitionCapacity : newAmmunitionAmount;
+				SetAmmunitionCount(ammunitionType, newAmmunitionAmount);
 				break;
 			default:
 				int i = 0;
@@ -195,7 +195,7 @@ public class HGCharacterInventory {
 		// Item item = GetItem(atIndex); // Uncomment if we want to remove equipped items
 		HGItem item = _items[atIndex];
 
-		Debug.Log("Equipping item:" + item.name);
+		// Debug.Log("Equipping item:" + item.name);
 
 		float equipTime = 0;
 		if(item != null) {
@@ -259,8 +259,7 @@ public class HGCharacterInventory {
 			_equippedWeapon.Unequip();
 
 			switch (_equippedWeapon.weaponType) {
-				case WeaponType.Gun:
-		            // ((HGGun)_equippedWeapon).OnReloadDone -= OnReloadDone;
+				case WeaponType.Ranged:
 					break;
 				default:
 					break;
@@ -272,27 +271,33 @@ public class HGCharacterInventory {
 
 	#endregion
 
-	#region gun logic
+	#region ranged weapon logic
 
+	/*
+	 * Reloads the currently equipped ranged weapon if available
+	 */
 	public float Reload(float reloadTimeModifier) {
-		if(_equippedWeapon != null && _equippedWeapon.weaponType == WeaponType.Gun && _ammunitions[(int)((HGGun)_equippedWeapon).ammunitionType] > 0) {
-			HGGun equippedGun = (HGGun)_equippedWeapon;
+		if(_equippedWeapon != null && _equippedWeapon.weaponType == WeaponType.Ranged && _ammunitions[(int)((HGRangedWeapon)_equippedWeapon).ammunitionType] > 0) {
+			HGRangedWeapon equippedRangedWeapon = (HGRangedWeapon)_equippedWeapon;
 
-			return equippedGun.Reload(reloadTimeModifier);
+			return equippedRangedWeapon.Reload(reloadTimeModifier);
 		}
 
 		return 0f;
 	}
 
+	/*
+	 * Callback for when the ranged weapon has finished reloading
+	 */
     public void ReloadDone() {
     	if(_equippedWeapon != null) {
-    		HGGun equippedGun = (HGGun)_equippedWeapon;
-    		AmmunitionType ammunitionType = equippedGun.ammunitionType;
-        	int newAmmoAmmount = equippedGun.ReloadDone(_ammunitions[(int)ammunitionType]);
+    		HGRangedWeapon equippedRangedWeapon = (HGRangedWeapon)_equippedWeapon;
+    		AmmunitionType ammunitionType = equippedRangedWeapon.ammunitionType;
+        	int newAmmunitionAmount = equippedRangedWeapon.ReloadDone(_ammunitions[(int)ammunitionType]);
 
-        	SetAmmoCount(ammunitionType, newAmmoAmmount);
+        	SetAmmunitionCount(ammunitionType, newAmmunitionAmount);
         	
-        	// Debug.Log("New ammo: " + ammunitionType + " " + _ammunitions[(int)ammunitionType]);
+        	// Debug.Log("New ammunition: " + ammunitionType + " " + _ammunitions[(int)ammunitionType]);
         }
 
     }

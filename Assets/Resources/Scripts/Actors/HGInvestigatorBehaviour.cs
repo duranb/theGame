@@ -36,7 +36,7 @@ public class HGInvestigatorBehaviour : MonoBehaviour
 		
 		_characterAnimator = new HGCharacterAnimator();
 
-		_characterInventory.SetAmmoCapacity(AmmunitionType.Revolver, 30);
+		_characterInventory.SetAmmunitionCapacity(AmmunitionType.Revolver, 30);
 	}
 
 	#region Event Listeners
@@ -124,7 +124,10 @@ public class HGInvestigatorBehaviour : MonoBehaviour
         {
             if (_characterInventory.equippedWeapon != null)
             {
-                float attackTime = _characterInventory.equippedWeapon.Attack(this.transform.position, this.transform.rotation, 1, 1);
+                float attackTime = 0f;
+                if(_characterInventory.equippedWeapon.weaponType == WeaponType.Ranged) {
+                    attackTime = ((HGRangedWeapon)_characterInventory.equippedWeapon).Shoot(this.transform.position, this.transform.right * this.transform.localScale.x, 1f, 1f, 1f);
+                }
                 _characterAnimator.Attack(attackTime);
                 _characterAnimator.OnAttackDone = _characterInventory.equippedWeapon.AttackDone;
                 if (_characterInventory.equippedWeapon.weaponState == WeaponState.Empty)

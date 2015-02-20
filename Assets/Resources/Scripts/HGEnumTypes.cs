@@ -31,7 +31,13 @@ public enum AmmunitionType
 	Length
 }
 
-public enum GunType
+public enum TrajectoryType {
+	Arch,
+	Straight,
+	Wave
+}
+
+public enum RangedWeaponType
 {
 	Revolver,
 	Rifle,
@@ -41,7 +47,7 @@ public enum GunType
 public enum WeaponType
 {
 	Melee,
-	Gun
+	Ranged
 }
 
 public enum WeaponState {

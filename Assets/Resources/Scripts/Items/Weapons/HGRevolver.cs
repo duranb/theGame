@@ -1,12 +1,12 @@
 using UnityEngine;
 using System.Collections;
 
-public class HGRevolver : HGGun {
-	public HGRevolver(string revolverName, float baseDamage, float baseEquipTime, float baseRate, float baseReloadTime, int baseClipSize, int currentClipAmmoCount) 
-	: base(revolverName, GunType.Revolver, AmmunitionType.Revolver, (GameObject)Resources.Load("Prefabs/Ammunitions/38mmBullet", typeof(GameObject)), baseDamage, baseEquipTime, baseRate, baseReloadTime, baseClipSize, currentClipAmmoCount) {
+public class HGRevolver : HGRangedWeapon {
+	public HGRevolver(string revolverName, float baseDamage, float baseEquipTime, float baseAttackRate, float baseReloadTime, int baseClipSize, float baseAccuracy = 1.0f, int currentClipAmmunitionCount = 0, float ammunitionVelocityModifier = 1.0f)
+	: base(revolverName, RangedWeaponType.Revolver, AmmunitionType.Revolver, (GameObject)Resources.Load("Prefabs/Ammunitions/38mmBullet", typeof(GameObject)), Vector3.one, TrajectoryType.Straight, baseDamage, baseEquipTime, baseAttackRate, baseReloadTime, baseClipSize, baseAccuracy, currentClipAmmunitionCount, ammunitionVelocityModifier) {
 	}
 
-	public override float Attack(Vector3 position, Quaternion direction, float attackDamageModifier, float attackSpeedModifier) {
-		return base.Attack(position, direction, attackDamageModifier, attackSpeedModifier);
+	public override float Shoot(Vector3 position, Vector3 direction, float attackDamageModifier, float attackSpeedModifier, float velocityModifier = 1.0f, float attackAccuracyModifier = 1.0f) {
+		return base.Shoot(position, direction, attackDamageModifier, attackSpeedModifier, velocityModifier, attackAccuracyModifier);
 	}
 }
