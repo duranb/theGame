@@ -43,6 +43,8 @@ public class HGRangedWeapon : HGWeapon {
 	 * baseAccuracy(optional) - the base accuracy of the weapon
 	 * currentClipAmmunitionCount(optional) - the current ammunition count in the ranged weapon's clip
 	 * ammunitionVelocityModifier(optional) - the modifier for the ammunitions velocity
+	 *
+	 * NOTE: a currentClipAmmunitionCount of -1 indicates infinite ammunition
 	 */
 	public HGRangedWeapon(string weaponName, RangedWeaponType rangedWeaponType, AmmunitionType ammunitionType, GameObject ammunitionPrefab, Vector3 ammunitionScale, TrajectoryType ammunitionTrajectoryType, float baseDamage, float baseEquipTime, float baseAttackRate, float baseReloadTime, int baseClipSize, float baseAccuracy = 1.0f, int currentClipAmmunitionCount = 0, float ammunitionVelocityModifier = 1.0f) 
 	: base(weaponName, WeaponType.Ranged, baseDamage, baseEquipTime, baseAttackRate, baseAccuracy) {
@@ -71,7 +73,7 @@ public class HGRangedWeapon : HGWeapon {
 	 */
 	public virtual float Shoot(Vector3 position, Vector3 direction, float attackDamageModifier, float attackRateModifier, float velocityModifier = 1.0f, float attackAccuracyModifier = 1.0f) {
 		float attackTime = 0;
-		if(_currentClipAmmunitionCount > 0 && this._weaponState == WeaponState.Ready) {
+		if((_currentClipAmmunitionCount > 0 || _currentClipAmmunitionCount == -1) && this._weaponState == WeaponState.Ready) {
 			// Fire projectile
 			GameObject ammunitionObject = (GameObject)MonoBehaviour.Instantiate(_ammunitionPrefab, position, Quaternion.identity);
 			
@@ -83,7 +85,9 @@ public class HGRangedWeapon : HGWeapon {
 			ammunitionObject.transform.localScale = Vector3.Scale(ammunitionObject.transform.localScale, _ammunitionScale);
 			ammunition.Fire(this._baseDamage * attackDamageModifier, direction, _ammunitionTrajectoryType, _ammunitionVelocityModifier * velocityModifier);
 
-			_currentClipAmmunitionCount--;
+			if(_currentClipAmmunitionCount > 0) {
+				_currentClipAmmunitionCount--;
+			}
 
 			this.SetState(WeaponState.Attacking);
 			attackTime = this._baseAttackRate * attackRateModifier;
