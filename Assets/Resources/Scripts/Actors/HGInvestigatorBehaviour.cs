@@ -84,13 +84,13 @@ public class HGInvestigatorBehaviour : MonoBehaviour
         //else if (Input.GetKeyDown(KeyCode.LeftArrow))
         //    transform.rotation = Quaternion.LookRotation(-Vector3.right);
 
-        if (Input.GetKey(KeyCode.RightArrow))
+        if (Input.GetKey(KeyCode.D))
         {
             _normalizedHorizontalSpeed = 1;
             if (transform.localScale.x < 0f)
                 transform.localScale = new Vector3(-transform.localScale.x, transform.localScale.y, transform.localScale.z);
         }
-        else if (Input.GetKey(KeyCode.LeftArrow))
+        else if (Input.GetKey(KeyCode.A))
         {
             _normalizedHorizontalSpeed = -1;
             if (transform.localScale.x > 0f)
@@ -102,7 +102,7 @@ public class HGInvestigatorBehaviour : MonoBehaviour
         }
 
         // we can only jump while grounded
-        if (_controller._isGrounded && Input.GetKeyDown(KeyCode.UpArrow))
+        if (_controller._isGrounded && Input.GetKeyDown(KeyCode.W))
         {
             _velocity.y = Mathf.Sqrt(2f * _jumpHeight * -_gravity);
         }
@@ -120,15 +120,21 @@ public class HGInvestigatorBehaviour : MonoBehaviour
 
     private void DoWeaponInput()
     {
-        if (Input.GetKey(KeyCode.Space))
+        int leftInput = Input.GetKey(KeyCode.LeftArrow) ? -1 : 0;
+        int rightInput = Input.GetKey(KeyCode.RightArrow) ? 1 : 0;
+        int upInput = Input.GetKey(KeyCode.UpArrow) ? 1 : 0;
+        int downInput = Input.GetKey(KeyCode.DownArrow) ? -1 : 0;
+
+        if ((leftInput + rightInput) != 0 || (upInput + downInput) != 0)
         {
             if (_characterInventory.equippedWeapon != null)
             {
+                Vector3 attackDirection = new Vector3(leftInput + rightInput, upInput + downInput, 0);
                 float attackTime = 0f;
                 if(_characterInventory.equippedWeapon.weaponType == WeaponType.Ranged) {
-                    attackTime = ((HGRangedWeapon)_characterInventory.equippedWeapon).Shoot(this.transform.position, this.transform.right * this.transform.localScale.x, 1f, 1f, 1f);
+                    attackTime = ((HGRangedWeapon)_characterInventory.equippedWeapon).Shoot(this.transform.position, attackDirection, 1f, 1f, 1f);
                 } else if(_characterInventory.equippedWeapon.weaponType == WeaponType.Melee) {
-                    attackTime = ((HGMeleeWeapon)_characterInventory.equippedWeapon).Swing(this.transform.position, this.transform.right * this.transform.localScale.x, 1f, 1f, 1f);
+                    attackTime = ((HGMeleeWeapon)_characterInventory.equippedWeapon).Swing(this.transform.position, attackDirection, 1f, 1f, 1f);
                 }
                 _characterAnimator.Attack(attackTime);
                 _characterAnimator.OnAttackDone = _characterInventory.equippedWeapon.AttackDone;

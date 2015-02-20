@@ -77,17 +77,25 @@ public class HGRangedWeapon : HGWeapon {
 		if((_currentClipAmmunitionCount > 0 || _currentClipAmmunitionCount == -1) && this._weaponState == WeaponState.Ready) {
 			// Fire projectile
 			float accuracy = this._baseAccuracy * attackAccuracyModifier;
-			direction.y += Random.Range(-(1f - (1f * accuracy)), (1f - (1f * accuracy)));
 
-			Vector3 attackPosition = position + Vector3.Scale(this._attackOffset, new Vector3(direction.x, 1f, 1f));
+			// Apply inaccuracy to ammunition trajectory
+			Vector3 ammunitionDirection = direction;
+			ammunitionDirection.y += Random.Range(-(1f - (1f * accuracy)), (1f - (1f * accuracy)));
+
+			// Find the angle to rotate the point where the ammunition will be shot from
+			Vector3 attackPosition = Vector3.Scale(this._attackOffset, new Vector3(direction.x, 1f, 1f));
+			float angle = Vector3.Angle(direction, (direction.x > 0) ? Vector3.right : Vector3.left) * direction.y * direction.x;
+
+			// Rotate the attack offset and make it relative to the passed in position
+			attackPosition = position + (Quaternion.Euler(0, 0, angle) * attackPosition);
 
 			GameObject ammunitionObject = (GameObject)MonoBehaviour.Instantiate(_ammunitionPrefab, attackPosition, Quaternion.identity);
 			
 			HGAmmunitionBehaviour ammunition = ammunitionObject.GetComponent<HGAmmunitionBehaviour>();
 
-			
+			// Apply the weapon's scale modifier
 			ammunitionObject.transform.localScale = Vector3.Scale(ammunitionObject.transform.localScale, _ammunitionScale);
-			ammunition.Fire(this._baseDamage * attackDamageModifier, direction, _ammunitionTrajectoryType, _ammunitionVelocityModifier * velocityModifier);
+			ammunition.Fire(this._baseDamage * attackDamageModifier, ammunitionDirection, _ammunitionTrajectoryType, _ammunitionVelocityModifier * velocityModifier);
 
 			if(_currentClipAmmunitionCount > 0) {
 				_currentClipAmmunitionCount--;
